@@ -3,6 +3,7 @@ const {z} = require('zod');
 const createUser = z.object({
     firstname: z.string(),
     lastname: z.string(),
+    mobile: z.string().length(10),
     email: z.string().email(),
     password: z.string().min(6)
 })

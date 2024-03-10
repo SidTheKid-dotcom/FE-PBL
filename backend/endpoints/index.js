@@ -11,9 +11,9 @@ app.use(cors());
 
 app.use("/api/v1", mainRouter);
 
-app.use(function(req, res, err) {
+/* app.use(function(req, res, err) {
     console.log("some error occured");
-});
+}); */
 
 app.listen(port, () => {
     console.log(`Server listening to port ${port}`);

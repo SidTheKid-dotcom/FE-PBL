@@ -8,22 +8,14 @@ const userSchema = new mongoose.Schema({
     data: {
         firstname: String,
         lastname: String,
-        mobile: Number,
+        mobile: String,
         email: String,
         password: String
     },
-    myCart: {
-        fullThali: Number,
-        halfThali1: Number,
-        halfThali2: Number,
-        halfThali3: Number
-    },
-    myOrders: {
-        fullThali: Number,
-        halfThali1: Number,
-        halfThali2: Number,
-        halfThali3: Number
-    }
+    myOrders: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ORDERS"
+    }]
 })
 
 const adminSchema = new mongoose.Schema({
@@ -37,47 +29,34 @@ const adminSchema = new mongoose.Schema({
 })
 
 const menuSchema = new mongoose.Schema({
-    fullThali: {
+    title: String,
+    content: {
         dryVeg: String,
         gravyVeg: String,
         rice: String,
         dal: String,
         chapati: String,
-        salad: String
-    },
-    halfThali1: {
-        dryVeg: String,
-        chapati: String,
-        salad: String
-    },
-    halfThali2: {
-        gravyVeg: String,
-        chapati: String,
-        salad: String
-    },
-    halfThali3: { 
-        rice: String,
-        dal: String,
         salad: String
     }
 })
 
-const pendingOrderSchema = new mongoose.Schema({
-    username: String,
-    otp: Number,
+const ordersSchema = new mongoose.Schema({
+    orderID: String,
+    tokenNo: Number,
     order: {
         fullThali: Number,
         halfThali1: Number,
         halfThali2: Number,
         halfThali3: Number
-    }
+    },
+    status: String,
 })
 
-const USER = mongoose.model('User',userSchema);
+const USER = mongoose.model('User', userSchema);
 const ADMIN = mongoose.model('Admin', adminSchema);
 const MENU = mongoose.model('Menu', menuSchema);
-const PENDING_ORDERS = mongoose.model('Pending-Orders', pendingOrderSchema);
+const ORDERS = mongoose.model('My-Orders', ordersSchema);
 
 module.exports = {
-    USER, ADMIN, MENU, PENDING_ORDERS
+    USER, ADMIN, MENU, ORDERS
 }
