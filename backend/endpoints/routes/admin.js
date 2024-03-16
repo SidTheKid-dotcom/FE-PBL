@@ -123,7 +123,7 @@ adminRouter.get('/home', authMiddleware, async function (req, res) {
 });
 
 adminRouter.post('/addMenuItem', authMiddleware, async function (req, res) {
-    const { title, content } = req.body;
+    const { title, ingredients, price } = req.body;
 
     const existingItem = await MENU.findOne({ title: title })
 
@@ -136,7 +136,8 @@ adminRouter.post('/addMenuItem', authMiddleware, async function (req, res) {
     try {
         await MENU.create({
             title: title,
-            content: content
+            ingredients: ingredients,
+            price: price
         })
 
         return res.status(200).json({
@@ -152,11 +153,11 @@ adminRouter.post('/addMenuItem', authMiddleware, async function (req, res) {
 
 adminRouter.put('/updateMenuItem', authMiddleware, async function (req, res) {
 
-    const { itemID, title, content } = req.body;
+    const { itemID, title, ingredients, price } = req.body;
 
     const existingItem = await MENU.findOne({ title: title });
 
-    if (existingItem?._id?.toString() !== itemID) {
+    if (existingItem && existingItem._id.toString() !== itemID) {
         return res.status(403).json({
             message: "Item with the title already exists"
         })
@@ -166,7 +167,7 @@ adminRouter.put('/updateMenuItem', authMiddleware, async function (req, res) {
 
         await MENU.findOneAndUpdate(
             { _id: itemID },
-            { $set: { title: title, content: content } }
+            { $set: { title: title, ingredients: ingredients, price: price } }
         )
 
         return res.status(200).json({
@@ -202,13 +203,14 @@ adminRouter.delete('/deleteMenuItem', authMiddleware, async function (req, res) 
 
 adminRouter.get('/allOrders', authMiddleware, async function (req, res) {
     try {
-        const orders = await ORDERS.find();
+        const orders = await ORDERS.find()
+            .populate('items.menuItem', '-_id title ingredients price', MENU);
 
         return res.status(200).json({
             orders: orders
         })
     }
-    catch(e) {
+    catch (e) {
         return res.status(403).json({
             message: "Error in fetching all orders"
         })
@@ -217,7 +219,8 @@ adminRouter.get('/allOrders', authMiddleware, async function (req, res) {
 
 adminRouter.get('/pendingOrders', authMiddleware, async function (req, res) {
     try {
-        const orders = await ORDERS.find();
+        const orders = await ORDERS.find()
+            .populate('items.menuItem', '-_id title ingredients price', MENU);
 
         const pendingOrders = orders.filter(order => order.status === "Pending")
 
@@ -225,7 +228,7 @@ adminRouter.get('/pendingOrders', authMiddleware, async function (req, res) {
             pendingOrders: pendingOrders
         })
     }
-    catch(e) {
+    catch (e) {
         return res.status(403).json({
             message: "Error in fetching all orders"
         })

@@ -30,25 +30,20 @@ const adminSchema = new mongoose.Schema({
 
 const menuSchema = new mongoose.Schema({
     title: String,
-    content: {
-        dryVeg: String,
-        gravyVeg: String,
-        rice: String,
-        dal: String,
-        chapati: String,
-        salad: String
-    }
+    ingredients: [String],
+    price: Number
 })
 
 const ordersSchema = new mongoose.Schema({
     orderID: String,
     tokenNo: Number,
-    order: {
-        fullThali: Number,
-        halfThali1: Number,
-        halfThali2: Number,
-        halfThali3: Number
-    },
+    items: [{
+        menuItem: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "MENU"
+        },
+        quantity: Number
+    }],
     status: String,
 })
 

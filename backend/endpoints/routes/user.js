@@ -149,7 +149,9 @@ userRouter.get('/my-orders', authMiddleware, async function (req, res) {
         return res.status(403).json({});
     }
 
-    const orderPromises = orderIDs.map(orderID => ORDERS.findById(orderID));
+    const orderPromises = orderIDs.map(orderID => ORDERS.findById(orderID)
+        .select('-_id -items._id')
+        .populate('items.menuItem', '-_id title ingredients price', MENU));
     const orders = await Promise.all(orderPromises);
 
     return res.status(200).json({
@@ -161,19 +163,18 @@ userRouter.get('/my-orders', authMiddleware, async function (req, res) {
 // Pay page for user
 userRouter.post('/pay', authMiddleware, async function (req, res) {
     // 1. My Cart db call
-    
+
     const order = req.body.order;
 
     // ADD MONGOOSE SESSION
 
-    try 
-    {
+    try {
         const newOrder = await ORDERS.create(order)
         const orderID = newOrder._id;
 
         const updatedUser = await USER.findOneAndUpdate(
             { _id: req.userID },
-            { $push: { myOrders: orderID } },
+            { $push: { myOrders: orderID.toString() } },
             { new: true }
         )
 
@@ -187,7 +188,7 @@ userRouter.post('/pay', authMiddleware, async function (req, res) {
             message: "Order added successfully"
         });
     }
-    catch(e) {
+    catch (e) {
         return res.status(411).json("Error in adding order")
     }
 });
