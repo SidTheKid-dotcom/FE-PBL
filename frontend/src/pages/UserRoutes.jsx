@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import Home from "./Home";
+import UserHome from "./UserHome";
 import Orders from "./Orders";
 
 export default function UserRoutes() {
@@ -7,7 +7,7 @@ export default function UserRoutes() {
     <>
       <h1>User Routes</h1>
       <Routes>
-        <Route index element={<Home />} />
+        <Route index element={<UserHome />} />
         <Route path="myOrders" element={<Orders />} />
       </Routes>
     </>
