@@ -186,6 +186,13 @@ adminRouter.delete('/deleteMenuItem', authMiddleware, async function (req, res) 
 
     const { itemID } = req.body;
 
+    if(!itemID)
+    {
+        return res.status(403).json({
+            message: "Please send valid item ID"
+        })
+    }
+
     try {
 
         await MENU.findOneAndDelete({ _id: itemID });
@@ -204,6 +211,7 @@ adminRouter.delete('/deleteMenuItem', authMiddleware, async function (req, res) 
 adminRouter.get('/allOrders', authMiddleware, async function (req, res) {
     try {
         const orders = await ORDERS.find()
+            .select('-_id -items._id')
             .populate('items.menuItem', '-_id title ingredients price', MENU);
 
         return res.status(200).json({
@@ -220,12 +228,13 @@ adminRouter.get('/allOrders', authMiddleware, async function (req, res) {
 adminRouter.get('/pendingOrders', authMiddleware, async function (req, res) {
     try {
         const orders = await ORDERS.find()
+            .select('-_id -items._id')
             .populate('items.menuItem', '-_id title ingredients price', MENU);
 
         const pendingOrders = orders.filter(order => order.status === "Pending")
-
+        
         return res.status(200).json({
-            pendingOrders: pendingOrders
+            orders: pendingOrders
         })
     }
     catch (e) {

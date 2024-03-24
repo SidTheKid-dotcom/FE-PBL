@@ -150,7 +150,6 @@ userRouter.get('/my-orders', authMiddleware, async function (req, res) {
     }
 
     const orderPromises = orderIDs.map(orderID => ORDERS.findById(orderID)
-        .select('-_id -items._id')
         .populate('items.menuItem', '-_id title ingredients price', MENU));
     const orders = await Promise.all(orderPromises);
 
