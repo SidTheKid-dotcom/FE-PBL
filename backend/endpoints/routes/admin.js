@@ -2,12 +2,17 @@ const express = require('express');
 const adminRouter = express.Router();
 
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const upload = multer({ limits: { fileSize: 1024 * 1024 * 5 } }); //Limits the image uploaded upto 5Mb
+
 const authMiddleware = require('./authMiddleware.js');
 const loginMiddleware = require('./loginMiddleware.js')
-const { createAdmin } = require('../../zod/types.js');
-const { ADMIN, MENU, ORDERS } = require('../../database/db.js');
 
 const JWT_SECRET = require("../../config.js");
+const cloudinary = require("./cloudinaryConfig.js")
+
+const { createAdmin } = require('../../zod/types.js');
+const { ADMIN, MENU, ORDERS } = require('../../database/db.js');
 
 adminRouter.post('/signup', async function (req, res) {
     const { firstName, lastName, mobile, email, password } = req.body;
@@ -122,32 +127,63 @@ adminRouter.get('/home', authMiddleware, async function (req, res) {
     })
 });
 
-adminRouter.post('/addMenuItem', authMiddleware, async function (req, res) {
-    const { title, ingredients, price } = req.body;
+adminRouter.post('/addMenuItem', authMiddleware, upload.single('image'), async function (req, res) {
+    const { title, wrappedIngredients, price } = req.body;
+    const image = req.file;
 
-    const existingItem = await MENU.findOne({ title: title })
+    const ingredients = JSON.parse(wrappedIngredients);
 
-    if (existingItem) {
-        return res.status(411).json({
-            message: "Item already exists in the menu"
-        })
+    if (!image) {
+        return res.status(400).json({ message: 'No file uploaded' });
     }
 
     try {
-        await MENU.create({
-            title: title,
-            ingredients: ingredients,
-            price: price
-        })
+        const imageData = image.buffer;
 
-        return res.status(200).json({
-            message: "Item successfully added to menu"
-        })
+        // Upload the image using Cloudinary's upload_stream method:
+        const result = await new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream((error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            });
+            stream.write(imageData);
+            stream.end();
+        });
+
+        const imageUrl = result.secure_url;
+
+        const existingItem = await MENU.findOne({ title: title })
+
+        if (existingItem) {
+            return res.status(411).json({
+                message: "Item already exists in the menu"
+            })
+        }
+
+        try {
+            await MENU.create({
+                title: title,
+                ingredients: ingredients,
+                price: price,
+                imageUrl: imageUrl
+            })
+
+            return res.status(200).json({
+                message: "Item successfully added to menu"
+            })
+        }
+        catch (e) {
+            return res.status(403).json({
+                message: "Could not add item to menu"
+            })
+        }
     }
-    catch (e) {
-        return res.status(403).json({
-            message: "Could not add item to menu"
-        })
+    catch (error) {
+        console.error("Error uploading image:", error);
+        return res.status(500).json({ message: "Upload failed" });
     }
 });
 
@@ -186,8 +222,7 @@ adminRouter.delete('/deleteMenuItem', authMiddleware, async function (req, res) 
 
     const { itemID } = req.body;
 
-    if(!itemID)
-    {
+    if (!itemID) {
         return res.status(403).json({
             message: "Please send valid item ID"
         })
@@ -232,7 +267,7 @@ adminRouter.get('/pendingOrders', authMiddleware, async function (req, res) {
             .populate('items.menuItem', '-_id title ingredients price', MENU);
 
         const pendingOrders = orders.filter(order => order.status === "Pending")
-        
+
         return res.status(200).json({
             orders: pendingOrders
         })

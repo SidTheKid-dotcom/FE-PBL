@@ -8,7 +8,7 @@ const { createUser } = require('../../zod/types.js');
 const { USER, MENU, ORDERS } = require('../../database/db.js');
 
 const JWT_SECRET = require("../../config.js");
-const { default: mongoose } = require('mongoose');
+const cloudinary = require("./cloudinaryConfig.js")
 
 userRouter.post('/signup', async function (req, res) {
     const { firstName, lastName, mobile, email, password } = req.body;

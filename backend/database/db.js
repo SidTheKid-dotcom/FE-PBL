@@ -31,7 +31,8 @@ const adminSchema = new mongoose.Schema({
 const menuSchema = new mongoose.Schema({
     title: String,
     ingredients: [String],
-    price: Number
+    price: Number,
+    imageUrl: String
 })
 
 const ordersSchema = new mongoose.Schema({
