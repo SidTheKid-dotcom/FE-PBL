@@ -43,8 +43,8 @@ export default function AdminHome() {
     }, [])
 
     return (
-        <div>
-            <button className='m-4 p-2 bg-orange-400 rounded-md font-bold' onClick={addMenuItem}>Add Item</button>
+        <div className='w-[50%] flex flex-col items-center'>
+            <button className='m-4 p-2 w-[80%] bg-orange-400 rounded-md font-bold' onClick={addMenuItem}>Add Item</button>
             {
                 menu.map(item => (
                     <AdminMenuItem key={item._id} item={item} />

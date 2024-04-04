@@ -1,14 +1,18 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useDropzone } from 'react-dropzone';
 
 import ActionSuccessful from "./ActionSuccessful";
 
 export default function AddCard() {
 
     const [itemInfo, setItemInfo] = useState(['', [], '']);
+    const [uploadedImage, setUploadedImage] = useState([]);
     const [allFilled, setAllFilled] = useState(true);
+
     const [sendRequest, setSendRequest] = useState(false);
     const [requestSuccess, setRequestSuccess] = useState(false);
+
 
     const handleUpdateClick = () => {
         setSendRequest(!sendRequest);
@@ -23,15 +27,18 @@ export default function AddCard() {
     const addItem = async () => {
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`http://localhost:3000/api/v1/admin/addMenuItem`, {
-                title: itemInfo[0],
-                ingredients: itemInfo[1],
-                price: itemInfo[2]
-            },
+
+            const formData = new FormData();
+            formData.append('title', itemInfo[0]);
+            formData.append('wrappedIngredients', JSON.stringify(itemInfo[1]));
+            formData.append('price', itemInfo[2]);
+            formData.append('image', uploadedImage);
+            
+            await axios.post(`http://localhost:3000/api/v1/admin/addMenuItem`, formData,
                 {
                     headers: {
                         'Authorization': token,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'multipart/form-data'
                     }
                 });
             setSendRequest(false);
@@ -58,6 +65,11 @@ export default function AddCard() {
         newIngredients.push("< Enter Ingredient >");
         setItemInfo([itemInfo[0], newIngredients, itemInfo[2]]);
     }
+
+    const onDrop = useCallback(async (acceptedImage) => {
+        setUploadedImage(acceptedImage[0]);
+    }, [uploadedImage]);
+    const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
     useEffect(() => {
 
@@ -99,6 +111,13 @@ export default function AddCard() {
                         <h1>Price:</h1>
                         <input className="mt-2 p-2 bg-transparent border border-solid border-black rounded-md" placeholder={"< Enter Price >"} onChange={(e) => updateItemInfo(e, 2)}></input>
                     </section>
+                    <section className="m-2">
+                        <h2>Upload Image: </h2>
+                        <div {...getRootProps({ className: 'dropzone' })} className="w-[197px]">
+                            <input {...getInputProps()} />
+                            <div className="mt-2 p-10 w-full h-[40%] flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg"><img src="/cloud-arrow-up-solid.svg" alt="Tick" width="80px"></img>Drag & Drop</div>
+                        </div>
+                    </section>
                     <section className="mt-3 text-center">
                         {
                             !allFilled && (
@@ -118,7 +137,6 @@ export default function AddCard() {
 }
 
 const RenderIngredients = ({ ingredients, updateIngredient, deleteIngredient, addIngredient }) => {
-
     return (
         <div className={`mt-2 w-full flex flex-col justify-center`}>
             {ingredients.map((ingredient, index) => (

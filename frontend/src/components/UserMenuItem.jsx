@@ -24,10 +24,10 @@ export default function UserMenuItems({ item, cart, setCart}) {
     }
 
     return (
-        <div className="m-4 p-4 w-[45%] min-h-[170px] grid grid-cols-12 bg-slate-100 text-black border border-solid rounded-lg">
+        <div className="m-4 p-4 w-full min-h-[170px] grid grid-cols-12 bg-slate-100 text-black border border-solid border-gray-300 rounded-lg">
             <section className="col-span-4">
-                <figure className="w-[80%] h-full bg-purple-200">
-                    {/* image */}
+                <figure className="w-[80%] h-auto bg-purple-200 border border-solid border-black">
+                    <img src={item.imageUrl} className="h-fill"></img>
                 </figure>
             </section>
             <section className="col-span-5">

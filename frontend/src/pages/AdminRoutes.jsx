@@ -5,18 +5,29 @@ import DeleteCard from "../components/DeleteCard";
 import EditCard from "../components/EditCard";
 import AddCard from "../components/AddCard";
 
+import AdminNavbar from "../components/AdminNavbar";
+import AdminSidebar from "../components/AdminSidebar";
+
 export default function AdminRoutes() {
   return (
     <>
-      <h1>Admin Routes</h1>
-      <Routes>
-        <Route index element={<AdminHome />} />
-        <Route path="allOrders" element={<Orders />} />
-        <Route path="pendingOrders" element={<Orders />} />
-        <Route path="addItem" element={<AddCard />} />
-        <Route path="editItem/:itemID" element={<EditCard />} />
-        <Route path="confirmDelete/:itemID/:itemTitle" element={<DeleteCard />} />
-      </Routes>
+      <AdminNavbar />
+
+      <div className="grid grid-cols-12 min-h-[100vh] h-full bg-slate-200">
+        <div className="col-span-2">
+          <AdminSidebar />
+        </div>
+        <div className="col-span-10 flex flex-col items-center">
+          <Routes>
+            <Route index element={<AdminHome />} />
+            <Route path="allOrders" element={<Orders />} />
+            <Route path="pendingOrders" element={<Orders />} />
+            <Route path="addItem" element={<AddCard />} />
+            <Route path="editItem/:itemID" element={<EditCard />} />
+            <Route path="confirmDelete/:itemID/:itemTitle" element={<DeleteCard />} />
+          </Routes>
+        </div>
+      </div>
     </>
   );
 }

@@ -51,25 +51,34 @@ export default function UserHome() {
     }, [cart])
 
     return (
-        <div>
-            <section>
-                {
-                    menu.map(item => (
-                        <UserMenuItem key={item._id} item={item} cart={cart} setCart={setCart} />
-                    ))
-                }
+        <div className='grid grid-cols-12 gap-6 min-h-[100vh] h-full'>
+            <section className='col-span-8 flex flex-col items-center'>
+                <div className='m-4 flex flex-col items-center h-full w-[80%] rounded-md'>
+                    {
+                        menu.map(item => (
+                            <UserMenuItem key={item._id} item={item} cart={cart} setCart={setCart} />
+                        ))
+                    }
+                </div>
             </section>
-            <div className="w-[20%]">
-                <Cart cart={cart} />
+            <div className='col-span-4 mt-[1px] bg-slate-100'>
+                <div className='m-4 p-4 min-h-[150px] flex flex-col items-center rounded-lg border border-solid border-gray-400'>
+                    <h1 className='font-bold text-slate-700'>My Order</h1>
+                    <div>
+                        <Cart cart={cart} />
+                    </div>
+                    <div className='mt-4'>
+                        <Total total={total} />
+                    </div>
+                    <Pay />
+                </div>
             </div>
-            <Total total={total} />
-            <Pay />
         </div>
     );
 }
 
 function Total({ total }) {
-    return <div>Total: {total}</div>
+    return <div className='text-black font-bold'>Total: {total}</div>
 }
 
 function Pay() {

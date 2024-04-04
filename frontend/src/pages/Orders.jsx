@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react"
 import axios from "axios";
+import OrderCard from "../components/OrderCard";
 
 export default function Orders() {
 
+    const pathname = window.location.pathname;
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
@@ -12,15 +14,13 @@ export default function Orders() {
             try {
                 const token = localStorage.getItem('token');
 
-                const pathname = window.location.pathname;
-
                 const response = await axios.get(`http://localhost:3000/api/v1${pathname}`, {
                     headers: {
                         'Authorization': token,
                         'Content-Type': 'application/json'
                     }
                 })
-                
+
                 setOrders(response.data.orders);
             }
             catch (error) {
@@ -34,27 +34,13 @@ export default function Orders() {
             setOrders([]);
         }
 
-    }, [])
+    }, [pathname])
 
-    return <div>
-        Orders:
+    return <div className="min-h-[100vh] h-full bg-purple-100 w-full text-black flex flex-col items-center">
         {
+            //Add something to remove the warninng "Each child should have a key prop"
             orders.map(order => (
-
-                <div key={order.orderID}>
-                    <h1>OrderID: {order.orderID}</h1>
-                    <h1>Token Number: {order.tokenNo}</h1>
-                    <div>
-                        {
-                            order.items.map(item => (
-                                <div key={item._id}>
-                                    {JSON.stringify(item.menuItem)}
-                                </div>
-                            ))
-                        }
-                    </div>
-                    <div>Status: {order.status}</div>
-                </div>
+                <OrderCard order={order} />
             ))
         }
     </div>
