@@ -6,6 +6,7 @@ export default function Orders() {
 
     const pathname = window.location.pathname;
     const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
 
@@ -20,6 +21,7 @@ export default function Orders() {
                         'Content-Type': 'application/json'
                     }
                 })
+                setLoading(false);
 
                 setOrders(response.data.orders);
             }
@@ -36,11 +38,16 @@ export default function Orders() {
 
     }, [pathname])
 
-    return <div className="min-h-[100vh] h-full w-full text-black flex flex-col items-center">
-        {
-            orders.reverse().map(order => (
-                <OrderCard key={order.orderID} order={order} />
-            ))
-        }
-    </div>
+    return (
+        <div className="min-h-[100vh] h-full w-full text-black flex flex-col items-center">
+            {loading || orders === null? (
+                <div className="flex items-center justify-center h-full">Loading...</div>
+            ) : (
+                orders.reverse().map(order => (
+                    <OrderCard key={order._id} order={order} setOrders={setOrders} />
+                ))
+            )
+            }
+        </div>
+    )
 }

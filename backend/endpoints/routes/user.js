@@ -159,7 +159,6 @@ userRouter.get('/my-orders', authMiddleware, async function (req, res) {
         const orderPromises = orderIDs.map(orderID => ORDERS.findById(orderID)
             .populate('items.menuItem', '-_id title ingredients price', MENU));
         const orders = await Promise.all(orderPromises);
-        console.log(orders);
 
         if (!orders || orders.length === 0) {
             return res.status(200).json({ message: "No orders found", orders: [] });

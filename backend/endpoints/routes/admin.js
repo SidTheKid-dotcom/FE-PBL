@@ -247,7 +247,7 @@ adminRouter.delete('/deleteMenuItem', authMiddleware, async function (req, res) 
 adminRouter.get('/allOrders', authMiddleware, async function (req, res) {
     try {
         const orders = await ORDERS.find()
-            .select('-_id -items._id')
+            .select()
             .populate('items.menuItem', '-_id title ingredients price', MENU);
 
         return res.status(200).json({
@@ -264,7 +264,7 @@ adminRouter.get('/allOrders', authMiddleware, async function (req, res) {
 adminRouter.get('/pendingOrders', authMiddleware, async function (req, res) {
     try {
         const orders = await ORDERS.find()
-            .select('-_id -items._id')
+            .select('-items._id')
             .populate('items.menuItem', '-_id title ingredients price', MENU);
 
         const pendingOrders = orders.filter(order => order.status === "Pending")
@@ -280,7 +280,77 @@ adminRouter.get('/pendingOrders', authMiddleware, async function (req, res) {
     }
 });
 
-adminRouter.post('/createCategory', authMiddleware, async (req, res) => {
+
+adminRouter.put('/updateOrderStatus', authMiddleware, async (req, res) => {
+
+    const { orderID } = req.body;
+
+    if (!orderID) {
+        return res.status(403).json({
+            message: "Please send valid order ID"
+        })
+    }
+
+    try {
+
+        const updatedOrder = await ORDERS.findByIdAndUpdate(
+            { _id: orderID },
+            { $set: { status: "Complete" } },
+            { new: true }
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).json({
+                message: "Order not found"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Order status updated successfully",
+            updatedOrder: updatedOrder
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: "Could not update order status"
+        })
+    }
+});
+
+adminRouter.delete('/deleteOrder', authMiddleware, async (req, res) => {
+    const { orderID } = req.body;
+
+    console.log(orderID);
+
+    if (!orderID) {
+        return res.status(403).json({
+            message: "Please send valid order ID"
+        })
+    }
+
+    try {
+
+        const deletedOrder = await ORDERS.findByIdAndDelete(orderID);
+
+        if (!deletedOrder) {
+            return res.status(404).json({
+                message: "Order not found"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Order deleted successfully",
+            deletedOrder: deletedOrder
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: "Could not update order status"
+        })
+    }
+})
+
+/* adminRouter.post('/createCategory', authMiddleware, async (req, res) => {
     const { category } = req.body.category;
 
     const existingCategory = await CATEGORIES.findOne({ name: category })
@@ -321,6 +391,6 @@ adminRouter.get('/viewCategories', authMiddleware, async (req, res) => {
             message: "Error in fetching all categories"
         })
     }
-})
+}) */
 
 module.exports = adminRouter;
