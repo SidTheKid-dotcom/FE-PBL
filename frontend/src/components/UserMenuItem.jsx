@@ -1,17 +1,17 @@
 import { useState } from "react";
 
-export default function UserMenuItems({ item, cart, setCart}) {
+export default function UserMenuItems({ menuItem, cart, setCart}) {
 
     const [quantity, setQuantity] = useState(1);
 
-    function addToCart(item) { 
+    function addToCart(menuItem) { 
 
         setQuantity(1);
 
-        if(cart.some(cartItem => cartItem.item == item))
+        if(cart.some(cartItem => cartItem.menuItem == menuItem))
         {
             const updatedCart = cart.map(cartItem => {
-                if (cartItem.item === item) {
+                if (cartItem.menuItem === menuItem) {
                     return { ...cartItem, quantity: cartItem.quantity + quantity };
                 }
                 return cartItem;
@@ -20,26 +20,26 @@ export default function UserMenuItems({ item, cart, setCart}) {
             return;
         }
 
-        setCart(prevCart => [...prevCart, {item, quantity}]);
+        setCart(prevCart => [...prevCart, {menuItem, quantity}]);
     }
 
     return (
         <div className="m-4 p-4 w-full min-h-[170px] grid grid-cols-12 bg-slate-100 text-black border border-solid border-gray-300 rounded-lg">
             <section className="col-span-4">
                 <figure className="w-[80%] h-auto bg-purple-200 border border-solid border-black">
-                    <img src={item.imageUrl} className="h-fill"></img>
+                    <img src={menuItem.imageUrl} className="h-fill"></img>
                 </figure>
             </section>
             <section className="col-span-5">
-                <h1 className="ml-[-15px] font-bold text-xl">{item.title}</h1>
+                <h1 className="ml-[-15px] font-bold text-xl">{menuItem.title}</h1>
                 { /* The columns depends on screen size so modify it later */}
-                {renderIngredients(item.ingredients, 2)}
+                {renderIngredients(menuItem.ingredients, 2)}
             </section>
             <section className="col-span-3 flex flex-col text-center">
-                <span className="font-bold text-lg">₹ {item.price}</span>
+                <span className="font-bold text-lg">₹ {menuItem.price}</span>
                 <div className="flex flex-col justify-end items-center w-full h-full">
                     <Quantity quantity={quantity} setQuantity={(setQuantity)} />
-                    <button onClick={() => addToCart(item)} className="mt-3 p-2 w-[70.5%] text-sm font-bold bg-orange-400 rounded-3xl">Add To Cart</button>
+                    <button onClick={() => addToCart(menuItem)} className="mt-3 p-2 w-[70.5%] text-sm font-bold bg-orange-400 rounded-3xl">Add To Cart</button>
                 </div>
             </section>
         </div>

@@ -38,7 +38,7 @@ export default function Orders() {
 
     return <div className="min-h-[100vh] h-full w-full text-black flex flex-col items-center">
         {
-            orders.map(order => (
+            orders.reverse().map(order => (
                 <OrderCard key={order.orderID} order={order} />
             ))
         }

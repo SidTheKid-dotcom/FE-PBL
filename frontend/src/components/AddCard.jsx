@@ -7,7 +7,8 @@ import ActionSuccessful from "./ActionSuccessful";
 export default function AddCard() {
 
     const [itemInfo, setItemInfo] = useState(['', [], '']);
-    const [uploadedImage, setUploadedImage] = useState([]);
+    const [uploadedImage, setUploadedImage] = useState(null);
+    const [displayImage, setDisplayImage] = useState(null);
     const [allFilled, setAllFilled] = useState(true);
 
     const [sendRequest, setSendRequest] = useState(false);
@@ -33,7 +34,7 @@ export default function AddCard() {
             formData.append('wrappedIngredients', JSON.stringify(itemInfo[1]));
             formData.append('price', itemInfo[2]);
             formData.append('image', uploadedImage);
-            
+
             await axios.post(`http://localhost:3000/api/v1/admin/addMenuItem`, formData,
                 {
                     headers: {
@@ -67,7 +68,20 @@ export default function AddCard() {
     }
 
     const onDrop = useCallback(async (acceptedImage) => {
-        setUploadedImage(acceptedImage[0]);
+        const file = acceptedImage[0];
+        setUploadedImage(file);
+
+        const isImage = file.type.startsWith('image/');
+
+        if (isImage) {
+            const reader = new FileReader();
+            reader.onload = () => setDisplayImage(reader.result);
+            reader.readAsDataURL(file);
+        } else {
+            setDisplayImage(null);
+            console.error(`Unsupported file type: ${file.type}`);
+        }
+
     }, [uploadedImage]);
     const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
@@ -115,7 +129,13 @@ export default function AddCard() {
                         <h2>Upload Image: </h2>
                         <div {...getRootProps({ className: 'dropzone' })} className="w-[197px]">
                             <input {...getInputProps()} />
-                            <div className="mt-2 p-10 w-full h-[40%] flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg"><img src="/cloud-arrow-up-solid.svg" alt="Tick" width="80px"></img>Drag & Drop</div>
+                            {(uploadedImage && displayImage) ? (
+                                <img src={displayImage} alt="Uploaded" width="150px" />
+                            )
+                                : (
+                                    < div className="mt-2 p-10 w-full h-[40%] flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg"><img src="/cloud-arrow-up-solid.svg" alt="Tick" width="80px"></img>Drag & Drop</div>
+                                )
+                            }
                         </div>
                     </section>
                     <section className="mt-3 text-center">

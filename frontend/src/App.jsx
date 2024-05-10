@@ -8,7 +8,7 @@ import { BrowserRouter, Routes, Route} from 'react-router-dom'
 import Overview from './pages/Overview'
 import UserRoutes from './pages/UserRoutes'
 import AdminRoutes from './pages/AdminRoutes'
-import Feedback from './pages/Feedback'
+import Login from './pages/Login'
 import NotFound from './pages/NotFound'
 
 function App() {
@@ -18,9 +18,9 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Overview />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/user/*" element={<UserRoutes />} />
           <Route path="/admin/*" element={<AdminRoutes />} />
-          <Route path="/feedback" element={<Feedback />} />
           <Route path="*" element={<NotFound />} ></Route>
         </Routes>
       </BrowserRouter>

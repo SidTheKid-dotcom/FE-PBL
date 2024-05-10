@@ -28,13 +28,6 @@ const adminSchema = new mongoose.Schema({
     },
 })
 
-const menuSchema = new mongoose.Schema({
-    title: String,
-    ingredients: [String],
-    price: Number,
-    imageUrl: String
-})
-
 const ordersSchema = new mongoose.Schema({
     orderID: String,
     tokenNo: Number,
@@ -45,14 +38,31 @@ const ordersSchema = new mongoose.Schema({
         },
         quantity: Number
     }],
+    price: Number,
     status: String,
+})
+
+const menuSchema = new mongoose.Schema({
+    title: String,
+    ingredients: [String],
+    price: Number,
+    imageUrl: String,
+    category: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "CATEGORIES"
+    }]
+})
+
+const categorySchema = new mongoose.Schema({
+    name: String
 })
 
 const USER = mongoose.model('User', userSchema);
 const ADMIN = mongoose.model('Admin', adminSchema);
 const MENU = mongoose.model('Menu', menuSchema);
 const ORDERS = mongoose.model('My-Orders', ordersSchema);
+const CATEGORIES = mongoose.model('Categories', categorySchema);
 
 module.exports = {
-    USER, ADMIN, MENU, ORDERS
+    USER, ADMIN, MENU, ORDERS, CATEGORIES
 }

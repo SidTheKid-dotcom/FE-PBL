@@ -12,7 +12,7 @@ const JWT_SECRET = require("../../config.js");
 const cloudinary = require("./cloudinaryConfig.js")
 
 const { createAdmin } = require('../../zod/types.js');
-const { ADMIN, MENU, ORDERS } = require('../../database/db.js');
+const { ADMIN, MENU, ORDERS, CATEGORIES } = require('../../database/db.js');
 
 adminRouter.post('/signup', async function (req, res) {
     const { firstName, lastName, mobile, email, password } = req.body;
@@ -128,7 +128,7 @@ adminRouter.get('/home', authMiddleware, async function (req, res) {
 });
 
 adminRouter.post('/addMenuItem', authMiddleware, upload.single('image'), async function (req, res) {
-    const { title, wrappedIngredients, price } = req.body;
+    const { category, title, wrappedIngredients, price } = req.body;
     const image = req.file;
 
     const ingredients = JSON.parse(wrappedIngredients);
@@ -165,6 +165,7 @@ adminRouter.post('/addMenuItem', authMiddleware, upload.single('image'), async f
 
         try {
             await MENU.create({
+                category: category,
                 title: title,
                 ingredients: ingredients,
                 price: price,
@@ -181,15 +182,15 @@ adminRouter.post('/addMenuItem', authMiddleware, upload.single('image'), async f
             })
         }
     }
-    catch (error) {
-        console.error("Error uploading image:", error);
+    catch (e) {
+        console.error("Error uploading image:", e);
         return res.status(500).json({ message: "Upload failed" });
     }
 });
 
 adminRouter.put('/updateMenuItem', authMiddleware, async function (req, res) {
 
-    const { itemID, title, ingredients, price } = req.body;
+    const { itemID, category, title, ingredients, price } = req.body;
 
     const existingItem = await MENU.findOne({ title: title });
 
@@ -203,7 +204,7 @@ adminRouter.put('/updateMenuItem', authMiddleware, async function (req, res) {
 
         await MENU.findOneAndUpdate(
             { _id: itemID },
-            { $set: { title: title, ingredients: ingredients, price: price } }
+            { $set: { category: category, title: title, ingredients: ingredients, price: price } }
         )
 
         return res.status(200).json({
@@ -278,5 +279,48 @@ adminRouter.get('/pendingOrders', authMiddleware, async function (req, res) {
         })
     }
 });
+
+adminRouter.post('/createCategory', authMiddleware, async (req, res) => {
+    const { category } = req.body.category;
+
+    const existingCategory = await CATEGORIES.findOne({ name: category })
+
+    if (existingCategory) {
+        return res.status(411).json({
+            message: "Category already exists in the menu"
+        })
+    }
+
+    try {
+        const newCategory = await CATEGORIES.create({
+            name: category
+        })
+        console.log(newCategory);
+        return res.status(200).json({
+            message: "Successfully created category"
+        })
+
+    }
+    catch (e) {
+        return res.status(403).json({
+            message: "Could not add category"
+        })
+    }
+})
+
+adminRouter.get('/viewCategories', authMiddleware, async (req, res) => {
+    try {
+        const categories = await CATEGORIES.find();
+
+        return res.status(200).json({
+            categories: categories
+        })
+    }
+    catch (e) {
+        return res.status(403).json({
+            message: "Error in fetching all categories"
+        })
+    }
+})
 
 module.exports = adminRouter;

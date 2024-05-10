@@ -14,11 +14,11 @@ export default function OrderCard({ order }) {
             <section>
                 <div className="p-4">
                     {
-                        order.items.map(item => (
-                            <div key={item._id} className="grid grid-cols-12 text-center">
-                                <div className="col-span-4">Title: {item.menuItem.title}</div>
-                                <div className="col-span-4">Price: {item.menuItem.price}</div>
-                                <div className="col-span-4">Quantity: {item.quantity}</div>
+                        order.items.map(orderItem => (
+                            <div key={orderItem._id} className="grid grid-cols-12 text-center">
+                                <div className="col-span-4">Title: {orderItem.title}</div>
+                                <div className="col-span-4">Quantity: {orderItem.quantity}</div>
+                                <div className="col-span-4">Price: {orderItem.price}</div>
                             </div>
                         ))
                     }
@@ -26,6 +26,7 @@ export default function OrderCard({ order }) {
             </section>
             <section>
                 <div className="p-2 flex flex-row justify-center border-t border-gray-400">
+                    <span>Price: {order.price}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                     Status: <span className={`ml-1 font-bold ${statusColorClass}`}>{statusText}</span>
                 </div>
             </section>

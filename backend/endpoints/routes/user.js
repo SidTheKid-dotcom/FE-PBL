@@ -8,7 +8,18 @@ const { createUser } = require('../../zod/types.js');
 const { USER, MENU, ORDERS } = require('../../database/db.js');
 
 const JWT_SECRET = require("../../config.js");
-const cloudinary = require("./cloudinaryConfig.js")
+
+const mongoose = require('mongoose');
+
+const Razorpay = require('razorpay');
+
+const RAZORPAY_KEY_ID = 'rzp_test_YuGrLzykusvpEM'
+const RAZORPAY_SECRET_KEY = 'IVHjg4dlohmNMr6IE4RqxlxY'
+
+const instance = new Razorpay({
+    key_id: RAZORPAY_KEY_ID,
+    key_secret: RAZORPAY_SECRET_KEY,
+});
 
 userRouter.post('/signup', async function (req, res) {
     const { firstName, lastName, mobile, email, password } = req.body;
@@ -46,12 +57,6 @@ userRouter.post('/signup', async function (req, res) {
             email: email,
             password: password
         },
-        myCart: {
-            fullThali: 0,
-            halfThali1: 0,
-            halfThali2: 0,
-            halfThali3: 0
-        },
         myOrders: []
     })
 
@@ -63,7 +68,7 @@ userRouter.post('/signup', async function (req, res) {
 
     const userID = user._id;
     const payload = { userID: userID };
-    const options = { expiresIn: '1h' };
+    const options = { expiresIn: '8h' };
 
 
     try {
@@ -104,7 +109,7 @@ userRouter.post('/signin', loginMiddleware, async function (req, res) {
 
     const userID = user._id;
     const payload = { userID: userID };
-    const options = { expiresIn: '1h' };
+    const options = { expiresIn: '8h' };
 
     try {
         const token = jwt.sign(payload, JWT_SECRET, options);
@@ -132,64 +137,91 @@ userRouter.get('/home', authMiddleware, async function (req, res) {
 
 //My-orders page for user
 userRouter.get('/my-orders', authMiddleware, async function (req, res) {
-    // 1. My order db call 
-    const userID = req.userID;
+    try {
+        // Get the user's ID from the request
+        const userID = req.userID;
 
-    const user = await USER.findById(userID);
+        // Find the user by ID
+        const user = await USER.findById(userID);
 
-    if (!user) {
-        return res.status(403).json({
-            message: "User not found"
-        })
+        // If user not found, return 404
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Get the orderIDs from the user
+        const orderIDs = user.myOrders;
+
+        if (!orderIDs || orderIDs.length === 0) {
+            return res.status(200).json({ message: "No orders found", orders: [] });
+        }
+
+        const orderPromises = orderIDs.map(orderID => ORDERS.findById(orderID)
+            .populate('items.menuItem', '-_id title ingredients price', MENU));
+        const orders = await Promise.all(orderPromises);
+        console.log(orders);
+
+        if (!orders || orders.length === 0) {
+            return res.status(200).json({ message: "No orders found", orders: [] });
+        }
+
+        return res.status(200).json({
+            message: "Successfully fetched orders",
+            orders: orders
+        });
+    } catch (error) {
+        console.error("Error fetching orders:", error);
+        return res.status(500).json({ error: "Internal server error" });
     }
-
-    const orderIDs = user.myOrders;
-
-    if (!orderIDs) {
-        return res.status(403).json({});
-    }
-
-    const orderPromises = orderIDs.map(orderID => ORDERS.findById(orderID)
-        .populate('items.menuItem', '-_id title ingredients price', MENU));
-    const orders = await Promise.all(orderPromises);
-
-    return res.status(200).json({
-        message: "Successful in fetching orders",
-        orders: orders
-    })
-})
+});
 
 // Pay page for user
 userRouter.post('/pay', authMiddleware, async function (req, res) {
-    // 1. My Cart db call
-
-    const order = req.body.order;
 
     // ADD MONGOOSE SESSION
 
     try {
-        const newOrder = await ORDERS.create(order)
-        const orderID = newOrder._id;
 
-        const updatedUser = await USER.findOneAndUpdate(
-            { _id: req.userID },
-            { $push: { myOrders: orderID.toString() } },
-            { new: true }
-        )
+        const options = {
+            amount: order.price,
+            currency: "INR",
+            receipt: "order_rcptid_11"
+        };
+        instance.orders.create(options, async function (err, order) {
 
-        if (!updatedUser) {
-            return res.status(411).json({
-                message: "User not found"
-            })
-        }
-
-        return res.json({
-            message: "Order added successfully"
+            return res.json({
+                message: "Order created successfully"
+            });
         });
+
     }
     catch (e) {
         return res.status(411).json("Error in adding order")
     }
 });
+
+userRouter.post('/confirmPayment', authMiddleware, async function (req, res) {
+
+    const order = req.body.order;
+
+    const newOrder = await ORDERS.create(order)
+    const orderID = newOrder._id;
+
+    const updatedUser = await USER.findOneAndUpdate(
+        { _id: req.userID },
+        { $push: { myOrders: orderID.toString() } },
+        { new: true }
+    )
+
+    if (!updatedUser) {
+        return res.status(411).json({
+            message: "User not found"
+        })
+    }
+
+    return res.status(200).json({
+        message: 'Order added'
+    })
+})
 
 module.exports = userRouter;

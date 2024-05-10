@@ -14,8 +14,8 @@ export default function UserRoutes() {
         </div>
         <div className="col-span-10">
           <Routes>
-            <Route index element={<UserHome />} />
-            <Route path="my-orders" element={<Orders />} />
+            <Route path="Todays-Menu" element={<UserHome />} />
+            <Route path="My-Orders" element={<Orders />} />
           </Routes>
         </div>
       </div>
