@@ -120,7 +120,7 @@ adminRouter.post('/signin', loginMiddleware, async function (req, res) {
 });
 
 adminRouter.get('/home', authMiddleware, async function (req, res) {
-    const menu = await MENU.find();
+    const menu = await MENU.find().populate('category');
 
     return res.status(200).json({
         menu: menu
@@ -128,7 +128,7 @@ adminRouter.get('/home', authMiddleware, async function (req, res) {
 });
 
 adminRouter.post('/addMenuItem', authMiddleware, upload.single('image'), async function (req, res) {
-    const { category, title, wrappedIngredients, price } = req.body;
+    const { title, categoryID, wrappedIngredients, price } = req.body;
     const image = req.file;
 
     const ingredients = JSON.parse(wrappedIngredients);
@@ -165,7 +165,7 @@ adminRouter.post('/addMenuItem', authMiddleware, upload.single('image'), async f
 
         try {
             await MENU.create({
-                category: category,
+                category: categoryID,
                 title: title,
                 ingredients: ingredients,
                 price: price,
@@ -188,9 +188,16 @@ adminRouter.post('/addMenuItem', authMiddleware, upload.single('image'), async f
     }
 });
 
-adminRouter.put('/updateMenuItem', authMiddleware, async function (req, res) {
+adminRouter.put('/updateMenuItem', authMiddleware, upload.single('image'), async function (req, res) {
 
-    const { itemID, category, title, ingredients, price } = req.body;
+    const { itemID, title, category, wrappedIngredients, price, imageURL } = req.body;
+    const image = req.file;
+
+    // imageUrl is what we put into DB, 
+    // imageURL is what we get from frontend
+    let imageUrl = null;
+
+    const ingredients = JSON.parse(wrappedIngredients);
 
     const existingItem = await MENU.findOne({ title: title });
 
@@ -201,10 +208,30 @@ adminRouter.put('/updateMenuItem', authMiddleware, async function (req, res) {
     }
 
     try {
+        if (image) {
+            const imageData = image.buffer;
 
+            // Upload the image using Cloudinary's upload_stream method:
+            const result = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream((error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                });
+                stream.write(imageData);
+                stream.end();
+            });
+            imageUrl = result.secure_url;
+        }
+        else {
+            imageUrl = imageURL;
+        }
+        console.log(category);
         await MENU.findOneAndUpdate(
             { _id: itemID },
-            { $set: { category: category, title: title, ingredients: ingredients, price: price } }
+            { $set: { title: title, category: category, ingredients: ingredients, price: price, imageUrl: imageUrl } }
         )
 
         return res.status(200).json({
@@ -243,6 +270,41 @@ adminRouter.delete('/deleteMenuItem', authMiddleware, async function (req, res) 
         })
     }
 });
+
+adminRouter.post('/addCategory', authMiddleware, async function (req, res) {
+    const category = req.body.category;
+
+    const existingCategory = await CATEGORIES.findOne({ name: category })
+
+    if (existingCategory) {
+        return res.status(411).json({
+            message: "Category already exists in the menu"
+        })
+    }
+
+    try {
+        await CATEGORIES.create({
+            name: category
+        })
+        return res.status(200).json({
+            message: "Category successfully added",
+        })
+    }
+    catch (error) {
+        return res.status(500).json({
+            message: "Server error occured while adding category"
+        })
+    }
+
+})
+
+adminRouter.get('/getCategories', authMiddleware, async function (req, res) {
+    const categories = await CATEGORIES.find();
+
+    return res.status(200).json({
+        categories: categories
+    })
+})
 
 adminRouter.get('/allOrders', authMiddleware, async function (req, res) {
     try {
@@ -350,35 +412,7 @@ adminRouter.delete('/deleteOrder', authMiddleware, async (req, res) => {
     }
 })
 
-/* adminRouter.post('/createCategory', authMiddleware, async (req, res) => {
-    const { category } = req.body.category;
-
-    const existingCategory = await CATEGORIES.findOne({ name: category })
-
-    if (existingCategory) {
-        return res.status(411).json({
-            message: "Category already exists in the menu"
-        })
-    }
-
-    try {
-        const newCategory = await CATEGORIES.create({
-            name: category
-        })
-        console.log(newCategory);
-        return res.status(200).json({
-            message: "Successfully created category"
-        })
-
-    }
-    catch (e) {
-        return res.status(403).json({
-            message: "Could not add category"
-        })
-    }
-})
-
-adminRouter.get('/viewCategories', authMiddleware, async (req, res) => {
+/* adminRouter.get('/viewCategories', authMiddleware, async (req, res) => {
     try {
         const categories = await CATEGORIES.find();
 

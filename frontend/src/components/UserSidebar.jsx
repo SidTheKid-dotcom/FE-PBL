@@ -13,12 +13,17 @@ export default function UserSidebar() {
         navigate('/user/My-Orders')
     }
 
+    const navigateFeedback = () => {
+        navigate('/user/Feedback')
+    }
+
     const location = useLocation();
     const [active, setActive] = useState(0);
 
     useEffect(() => {
         if (location.pathname === "/user/Todays-Menu") setActive(0);
         else if (location.pathname === "/user/My-Orders") setActive(1);
+        else if (location.pathname === "/user/Feedback") setActive(2);
     }, [location.pathname]);
 
     return (
@@ -30,7 +35,7 @@ export default function UserSidebar() {
                 <button onClick={navigateOrders} className={`p-4 w-full flex justify-center ${active === 1 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}>
                     My Orders
                 </button>
-                <button className={`p-4 w-full flex justify-center ${active === 2 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}>
+                <button onClick={navigateFeedback} className={`p-4 w-full flex justify-center ${active === 2 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}>
                     Feedback
                 </button>
                 <button className={`p-4 w-full flex justify-center ${active === 3 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}>

@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
     },
     myOrders: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "ORDERS"
+        ref: "My-Orders"
     }]
 })
 
@@ -34,7 +34,7 @@ const ordersSchema = new mongoose.Schema({
     items: [{
         menuItem: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "MENU"
+            ref: "Menu"
         },
         quantity: Number
     }],
@@ -47,10 +47,10 @@ const menuSchema = new mongoose.Schema({
     ingredients: [String],
     price: Number,
     imageUrl: String,
-    category: [{
+    category: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "CATEGORIES"
-    }]
+        ref: "Categories"
+    }
 })
 
 const categorySchema = new mongoose.Schema({

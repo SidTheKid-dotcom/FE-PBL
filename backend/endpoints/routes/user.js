@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const authMiddleware = require('./authMiddleware.js');
 const loginMiddleware = require('./loginMiddleware.js')
 const { createUser } = require('../../zod/types.js');
-const { USER, MENU, ORDERS } = require('../../database/db.js');
+const { USER, MENU, ORDERS, CATEGORIES } = require('../../database/db.js');
 
 const JWT_SECRET = require("../../config.js");
 
@@ -129,11 +129,23 @@ userRouter.post('/signin', loginMiddleware, async function (req, res) {
 // Main user landing page endpoints
 userRouter.get('/home', authMiddleware, async function (req, res) {
     // 1. Main Menu db call
-    const menuItems = await MENU.find();
+
+    const filter = req.query.filter;
+
+    let query = {};
+    if (filter) {
+        query = { category: filter };
+    }
+
+    const menuItems = await MENU.find(query);
+    const categories = await CATEGORIES.find();
+
     res.json({
-        menu: menuItems
+        menu: menuItems,
+        categories: categories
     })
 });
+
 
 //My-orders page for user
 userRouter.get('/my-orders', authMiddleware, async function (req, res) {
@@ -175,29 +187,6 @@ userRouter.get('/my-orders', authMiddleware, async function (req, res) {
 });
 
 // Pay page for user
-userRouter.post('/pay', authMiddleware, async function (req, res) {
-
-    // ADD MONGOOSE SESSION
-
-    try {
-
-        const options = {
-            amount: order.price,
-            currency: "INR",
-            receipt: "order_rcptid_11"
-        };
-        instance.orders.create(options, async function (err, order) {
-
-            return res.json({
-                message: "Order created successfully"
-            });
-        });
-
-    }
-    catch (e) {
-        return res.status(411).json("Error in adding order")
-    }
-});
 
 userRouter.post('/confirmPayment', authMiddleware, async function (req, res) {
 

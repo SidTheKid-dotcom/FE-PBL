@@ -1,18 +1,19 @@
 export default function Cart({ cart, setCart }) {
 
-    function removeFromCart({ removeItem }) {
+    console.log(cart);
 
-        if (removeItem.menuItem.quantity === 1) {
-            const updatedCart = cart.filter(cartItem => cartItem.menuItem !== removeItem.menuItem)
+    function removeFromCart({ cartItem }) {
+
+        if (cartItem.quantity === 1) {
+            const updatedCart = cart.filter(existingItem => existingItem.menuItem._id !== cartItem.menuItem._id)
             setCart(updatedCart)
         }
         else {
-
-            const updatedCart = cart.map(cartItem => {
-                if (cartItem.menuItem === removeItem.menuItem) {
-                    return { ...cartItem, quantity: cartItem.quantity - 1 };
+            const updatedCart = cart.map(existingItem => {
+                if (existingItem.menuItem._id === cartItem.menuItem._id) {
+                    return { ...existingItem, quantity: existingItem.quantity - 1 };
                 }
-                return cartItem;
+                return existingItem;
             });
 
             setCart(updatedCart);

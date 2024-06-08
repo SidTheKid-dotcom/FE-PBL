@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { useState, useEffect } from "react"
 
+import Categories from "../components/Categories"
 import UserMenuItem from '../components/UserMenuItem'
 import Cart from '../components/Cart'
 
@@ -9,6 +10,9 @@ export default function UserHome() {
     const [menu, setMenu] = useState([]);
     const [cart, setCart] = useState([]);
     const [total, setTotal] = useState(0);
+
+    const [categories, setCategories] = useState([]);
+    const [filterCategory, setFilterCategory] = useState(null);
 
     useEffect(() => {
         const script = document.createElement('script');
@@ -29,13 +33,17 @@ export default function UserHome() {
                 const token = localStorage.getItem('token');
 
                 const response = await axios.get("http://localhost:3000/api/v1/user/home", {
+                    params: {
+                        filter: filterCategory
+                    },
                     headers: {
                         'Authorization': token,
                         'Content-Type': 'application/json'
                     }
-                })
+                });
 
                 setMenu(response.data.menu);
+                setCategories(response.data.categories);
             }
             catch (error) {
                 console.log("Error in fetching menu items")
@@ -46,9 +54,10 @@ export default function UserHome() {
 
         return () => {
             setMenu([]);
+            setCategories([]);
         }
 
-    }, [])
+    }, [filterCategory])
 
     useEffect(() => {
 
@@ -61,9 +70,22 @@ export default function UserHome() {
 
     }, [cart])
 
-    console.log(cart);
+    const handleRemoveFilter = () => {
+        setFilterCategory(null);
+    }
+
     return (
-        <div className='grid grid-cols-12 gap-6 min-h-[100vh] h-full'>
+        <div className='relative grid grid-cols-12 gap-6 min-h-[100vh] h-full'>
+            <section className='absolute top-0 left-0'>
+                <Categories
+                    categories={categories}
+                    selectedCategory={filterCategory}
+                    setSelectedCategory={setFilterCategory}
+                />
+                {
+                    filterCategory && <button onClick={handleRemoveFilter} className='bg-red-200 p-2 rounded-md'>Discard</button>
+                }
+            </section>
             <section className='col-span-8 flex flex-col items-center'>
                 <div className='m-4 flex flex-col items-center h-full w-[80%] rounded-md'>
                     {
@@ -99,15 +121,6 @@ function Pay({ cart, total }) {
 
     const handlePayment = async () => {
 
-        const test = {
-            orderID: Date.now(),
-            tokenNo: Date.now(),
-            items: cart,
-            price: total,
-            status: 'Pending',
-        }
-        console.log(test);
-
         try {
             const token = localStorage.getItem('token');
 
@@ -139,7 +152,6 @@ function Pay({ cart, total }) {
                         });
 
                     setOrderID(res.data.orderID);
-                    console.log(res.data);
 
                     location.href = '/user/Todays-Menu';
                 },

@@ -2,14 +2,18 @@ import axios from "axios";
 import { useEffect, useState, useCallback } from "react";
 import { useDropzone } from 'react-dropzone';
 
+import Categories from "./Categories";
 import ActionSuccessful from "./ActionSuccessful";
 
 export default function AddCard() {
 
-    const [itemInfo, setItemInfo] = useState(['', [], '']);
+    const [itemInfo, setItemInfo] = useState(['', [], 0]);
     const [uploadedImage, setUploadedImage] = useState(null);
     const [displayImage, setDisplayImage] = useState(null);
     const [allFilled, setAllFilled] = useState(true);
+
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
 
     const [sendRequest, setSendRequest] = useState(false);
     const [requestSuccess, setRequestSuccess] = useState(false);
@@ -33,6 +37,7 @@ export default function AddCard() {
             formData.append('title', itemInfo[0]);
             formData.append('wrappedIngredients', JSON.stringify(itemInfo[1]));
             formData.append('price', itemInfo[2]);
+            formData.append('categoryID', selectedCategory._id);
             formData.append('image', uploadedImage);
 
             await axios.post(`http://localhost:3000/api/v1/admin/addMenuItem`, formData,
@@ -86,6 +91,25 @@ export default function AddCard() {
     const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
     useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('http://localhost:3000/api/v1/admin/getCategories', {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+                setCategories(response.data.categories);
+            } catch (error) {
+                console.error('Error fetching categories:', error.message);
+            }
+        };
+
+        fetchCategories();
+
+    }, []);
+
+    useEffect(() => {
 
         const checkAllFilled = () => {
 
@@ -116,6 +140,14 @@ export default function AddCard() {
                     <section className="m-2">
                         <h1>Item name:</h1>
                         <input className="mt-2 p-2 bg-transparent border border-solid border-black rounded-md" placeholder={"< Enter Title >"} onChange={(e) => updateItemInfo(e, 0)}></input>
+                    </section>
+                    <section className="m-2">
+                        <h1>Select Category:</h1>
+                        <Categories
+                            categories={categories}
+                            selectedCategory={selectedCategory}
+                            setSelectedCategory={setSelectedCategory}
+                        />
                     </section>
                     <section className="m-2 min-w-[237.6px]">
                         <h1>Ingredients:</h1>
