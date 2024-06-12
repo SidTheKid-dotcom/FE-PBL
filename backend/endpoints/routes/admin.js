@@ -5,11 +5,11 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const upload = multer({ limits: { fileSize: 1024 * 1024 * 5 } }); //Limits the image uploaded upto 5Mb
 
-const authMiddleware = require('./authMiddleware.js');
-const loginMiddleware = require('./loginMiddleware.js')
+const { authMiddlewareAdmin } = require('./authMiddleware.js');
+const { loginMiddlewareAdmin } = require('./loginMiddleware.js');
 
-const JWT_SECRET = require("../../config.js");
-const cloudinary = require("./cloudinaryConfig.js")
+const { JWT_SECRET_ADMIN } = require("../../config.js");
+const cloudinary = require("./cloudinaryConfig.js");
 
 const { createAdmin } = require('../../zod/types.js');
 const { ADMIN, MENU, ORDERS, CATEGORIES } = require('../../database/db.js');
@@ -64,7 +64,7 @@ adminRouter.post('/signup', async function (req, res) {
 
 
     try {
-        const token = jwt.sign(payload, JWT_SECRET, options);
+        const token = jwt.sign(payload, JWT_SECRET_ADMIN, options);
 
         return res.status(200).json({
             message: "New Admin created",
@@ -79,7 +79,7 @@ adminRouter.post('/signup', async function (req, res) {
 
 });
 
-adminRouter.post('/signin', loginMiddleware, async function (req, res) {
+adminRouter.post('/signin', loginMiddlewareAdmin, async function (req, res) {
     if (req.adminID) {
         return res.status(200).json({ msg: 'Admin logged in using JWT' });
     }
@@ -105,7 +105,7 @@ adminRouter.post('/signin', loginMiddleware, async function (req, res) {
 
 
     try {
-        const token = jwt.sign(payload, JWT_SECRET, options);
+        const token = jwt.sign(payload, JWT_SECRET_ADMIN, options);
 
         return res.status(200).json({
             message: "admin signed in",
@@ -119,7 +119,7 @@ adminRouter.post('/signin', loginMiddleware, async function (req, res) {
     }
 });
 
-adminRouter.get('/home', authMiddleware, async function (req, res) {
+adminRouter.get('/home', authMiddlewareAdmin, async function (req, res) {
     const menu = await MENU.find().populate('category');
 
     return res.status(200).json({
@@ -127,7 +127,7 @@ adminRouter.get('/home', authMiddleware, async function (req, res) {
     })
 });
 
-adminRouter.post('/addMenuItem', authMiddleware, upload.single('image'), async function (req, res) {
+adminRouter.post('/addMenuItem', authMiddlewareAdmin, upload.single('image'), async function (req, res) {
     const { title, categoryID, wrappedIngredients, price } = req.body;
     const image = req.file;
 
@@ -188,7 +188,7 @@ adminRouter.post('/addMenuItem', authMiddleware, upload.single('image'), async f
     }
 });
 
-adminRouter.put('/updateMenuItem', authMiddleware, upload.single('image'), async function (req, res) {
+adminRouter.put('/updateMenuItem', authMiddlewareAdmin, upload.single('image'), async function (req, res) {
 
     const { itemID, title, category, wrappedIngredients, price, imageURL } = req.body;
     const image = req.file;
@@ -246,7 +246,7 @@ adminRouter.put('/updateMenuItem', authMiddleware, upload.single('image'), async
 
 });
 
-adminRouter.delete('/deleteMenuItem', authMiddleware, async function (req, res) {
+adminRouter.delete('/deleteMenuItem', authMiddlewareAdmin, async function (req, res) {
 
     const { itemID } = req.body;
 
@@ -271,7 +271,7 @@ adminRouter.delete('/deleteMenuItem', authMiddleware, async function (req, res) 
     }
 });
 
-adminRouter.post('/addCategory', authMiddleware, async function (req, res) {
+adminRouter.post('/addCategory', authMiddlewareAdmin, async function (req, res) {
     const category = req.body.category;
 
     const existingCategory = await CATEGORIES.findOne({ name: category })
@@ -298,7 +298,7 @@ adminRouter.post('/addCategory', authMiddleware, async function (req, res) {
 
 })
 
-adminRouter.get('/getCategories', authMiddleware, async function (req, res) {
+adminRouter.get('/getCategories', authMiddlewareAdmin, async function (req, res) {
     const categories = await CATEGORIES.find();
 
     return res.status(200).json({
@@ -306,7 +306,7 @@ adminRouter.get('/getCategories', authMiddleware, async function (req, res) {
     })
 })
 
-adminRouter.get('/allOrders', authMiddleware, async function (req, res) {
+adminRouter.get('/allOrders', authMiddlewareAdmin, async function (req, res) {
     try {
         const orders = await ORDERS.find()
             .select()
@@ -323,7 +323,7 @@ adminRouter.get('/allOrders', authMiddleware, async function (req, res) {
     }
 });
 
-adminRouter.get('/pendingOrders', authMiddleware, async function (req, res) {
+adminRouter.get('/pendingOrders', authMiddlewareAdmin, async function (req, res) {
     try {
         const orders = await ORDERS.find()
             .select('-items._id')
@@ -343,7 +343,7 @@ adminRouter.get('/pendingOrders', authMiddleware, async function (req, res) {
 });
 
 
-adminRouter.put('/updateOrderStatus', authMiddleware, async (req, res) => {
+adminRouter.put('/updateOrderStatus', authMiddlewareAdmin, async (req, res) => {
 
     const { orderID } = req.body;
 
@@ -379,7 +379,7 @@ adminRouter.put('/updateOrderStatus', authMiddleware, async (req, res) => {
     }
 });
 
-adminRouter.delete('/deleteOrder', authMiddleware, async (req, res) => {
+adminRouter.delete('/deleteOrder', authMiddlewareAdmin, async (req, res) => {
     const { orderID } = req.body;
 
     console.log(orderID);
@@ -412,7 +412,7 @@ adminRouter.delete('/deleteOrder', authMiddleware, async (req, res) => {
     }
 })
 
-/* adminRouter.get('/viewCategories', authMiddleware, async (req, res) => {
+/* adminRouter.get('/viewCategories', authMiddlewareAdmin, async (req, res) => {
     try {
         const categories = await CATEGORIES.find();
 

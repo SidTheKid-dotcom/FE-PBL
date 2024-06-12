@@ -1,3 +1,4 @@
-const JWT_SECRET = "ABCDEFG";
+const JWT_SECRET_ADMIN = "ADMIN_SECRET_KEY";
+const JWT_SECRET_USER = "USER_SECRET_KEY";
 
-module.exports = JWT_SECRET;
+module.exports = { JWT_SECRET_USER, JWT_SECRET_ADMIN };

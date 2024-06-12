@@ -2,14 +2,13 @@ const express = require('express');
 const userRouter = express.Router();
 
 const jwt = require('jsonwebtoken');
-const authMiddleware = require('./authMiddleware.js');
-const loginMiddleware = require('./loginMiddleware.js')
+const { authMiddlewareUser } = require('./authMiddleware.js');
+const { loginMiddlewareUser } = require('./loginMiddleware.js');
+
 const { createUser } = require('../../zod/types.js');
 const { USER, MENU, ORDERS, CATEGORIES } = require('../../database/db.js');
 
-const JWT_SECRET = require("../../config.js");
-
-const mongoose = require('mongoose');
+const { JWT_SECRET_USER } = require("../../config.js");
 
 const Razorpay = require('razorpay');
 
@@ -72,7 +71,7 @@ userRouter.post('/signup', async function (req, res) {
 
 
     try {
-        const token = jwt.sign(payload, JWT_SECRET, options);
+        const token = jwt.sign(payload, JWT_SECRET_USER, options);
 
         return res.status(200).json({
             message: "New user created",
@@ -87,7 +86,7 @@ userRouter.post('/signup', async function (req, res) {
 
 });
 
-userRouter.post('/signin', loginMiddleware, async function (req, res) {
+userRouter.post('/signin', loginMiddlewareUser, async function (req, res) {
     if (req.userID) {
         return res.status(200).json({ msg: 'User logged in using JWT' });
     }
@@ -112,7 +111,7 @@ userRouter.post('/signin', loginMiddleware, async function (req, res) {
     const options = { expiresIn: '8h' };
 
     try {
-        const token = jwt.sign(payload, JWT_SECRET, options);
+        const token = jwt.sign(payload, JWT_SECRET_USER, options);
 
         return res.status(200).json({
             message: "User sucessfully signed in",
@@ -127,7 +126,7 @@ userRouter.post('/signin', loginMiddleware, async function (req, res) {
 });
 
 // Main user landing page endpoints
-userRouter.get('/home', authMiddleware, async function (req, res) {
+userRouter.get('/home', authMiddlewareUser, async function (req, res) {
     // 1. Main Menu db call
 
     const filter = req.query.filter;
@@ -148,7 +147,7 @@ userRouter.get('/home', authMiddleware, async function (req, res) {
 
 
 //My-orders page for user
-userRouter.get('/my-orders', authMiddleware, async function (req, res) {
+userRouter.get('/my-orders', authMiddlewareUser, async function (req, res) {
     try {
         // Get the user's ID from the request
         const userID = req.userID;
@@ -188,7 +187,7 @@ userRouter.get('/my-orders', authMiddleware, async function (req, res) {
 
 // Pay page for user
 
-userRouter.post('/confirmPayment', authMiddleware, async function (req, res) {
+userRouter.post('/confirmPayment', authMiddlewareUser, async function (req, res) {
 
     const order = req.body.order;
 
