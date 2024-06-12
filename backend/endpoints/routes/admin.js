@@ -412,7 +412,7 @@ adminRouter.delete('/deleteOrder', authMiddlewareAdmin, async (req, res) => {
     }
 })
 
-/* adminRouter.get('/viewCategories', authMiddlewareAdmin, async (req, res) => {
+adminRouter.get('/viewCategories', authMiddlewareAdmin, async (req, res) => {
     try {
         const categories = await CATEGORIES.find();
 
@@ -425,6 +425,6 @@ adminRouter.delete('/deleteOrder', authMiddlewareAdmin, async (req, res) => {
             message: "Error in fetching all categories"
         })
     }
-}) */
+})
 
 module.exports = adminRouter;

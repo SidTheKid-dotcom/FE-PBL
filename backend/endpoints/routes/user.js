@@ -6,7 +6,7 @@ const { authMiddlewareUser } = require('./authMiddleware.js');
 const { loginMiddlewareUser } = require('./loginMiddleware.js');
 
 const { createUser } = require('../../zod/types.js');
-const { USER, MENU, ORDERS, CATEGORIES } = require('../../database/db.js');
+const { USER, MENU, ORDERS, CATEGORIES, FEEDBACK } = require('../../database/db.js');
 
 const { JWT_SECRET_USER } = require("../../config.js");
 
@@ -210,5 +210,58 @@ userRouter.post('/confirmPayment', authMiddlewareUser, async function (req, res)
         message: 'Order added'
     })
 })
+
+userRouter.post('/feedback', authMiddlewareUser, async function (req, res) {
+    try {
+        const userID = req.userID;
+        const { rating, feedback } = req.body; // Extract rating and feedback from request body
+
+        // Check if user exists
+        const user = await USER.findById(userID);
+        if (!user) {
+            return res.status(400).json({ message: "Invalid user ID" });
+        }
+
+        // Check if user has already given feedback
+        const existingFeedback = await FEEDBACK.findOne({ userID: userID });
+        if (existingFeedback) {
+            return res.status(400).json({ message: "User has already given feedback" });
+        }
+
+        // Create feedback
+        const createdFeedback = await FEEDBACK.create({
+            rating: rating,
+            feedback: feedback,
+            userID: userID
+        });
+
+        res.status(201).json({
+            message: "New Feedback Created",
+            feedback: createdFeedback
+        });
+    } catch (error) {
+        console.error("Error in giving feedback:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+userRouter.get('/feedbacks', async function (req, res) {
+    try {
+        // Fetch feedbacks with non-empty feedback strings, sort by rating in decreasing order, and limit to top 5
+        const feedbacks = await FEEDBACK.find({ feedback: { $ne: "" } })
+            .sort({ rating: -1 })
+            .limit(5)
+            .populate('userID');
+
+        res.status(200).json({
+            message: "Top 5 Feedbacks retrieved successfully",
+            feedbacks: feedbacks
+        });
+    } catch (error) {
+        console.error("Error in retrieving feedbacks:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 
 module.exports = userRouter;

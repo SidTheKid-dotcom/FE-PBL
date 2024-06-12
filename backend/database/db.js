@@ -57,12 +57,22 @@ const categorySchema = new mongoose.Schema({
     name: String
 })
 
+const feedbackSchema = new mongoose.Schema({
+    rating: Number,
+    feedback: String,
+    userID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    }
+})
+
 const USER = mongoose.model('User', userSchema);
 const ADMIN = mongoose.model('Admin', adminSchema);
 const MENU = mongoose.model('Menu', menuSchema);
 const ORDERS = mongoose.model('My-Orders', ordersSchema);
 const CATEGORIES = mongoose.model('Categories', categorySchema);
+const FEEDBACK = mongoose.model('Feedback', feedbackSchema);
 
 module.exports = {
-    USER, ADMIN, MENU, ORDERS, CATEGORIES
+    USER, ADMIN, MENU, ORDERS, CATEGORIES, FEEDBACK
 }
