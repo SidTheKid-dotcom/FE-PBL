@@ -14,6 +14,9 @@ export default function UserSidebar() {
     const navigatePendingOrders = () => {
         navigate('/admin/pendingOrders')
     }
+    const navigateCategories = () => {
+        navigate('/admin/Categories')
+    }
 
     const location = useLocation();
     const [active, setActive] = useState(0);
@@ -22,7 +25,8 @@ export default function UserSidebar() {
         if (location.pathname === "/admin") setActive(0);
         else if (location.pathname === "/admin/allOrders") setActive(1);
         else if (location.pathname === "/admin/pendingOrders") setActive(2);
-        else if (location.pathname === "/admin/logout") setActive(3);
+        else if (location.pathname === "/admin/Categories") setActive(3);
+        else if (location.pathname === "/admin/logout") setActive(4);
     }, [location.pathname]);
 
     return (
@@ -37,7 +41,10 @@ export default function UserSidebar() {
                 <button onClick={navigatePendingOrders} className={`p-4 w-full flex justify-center ${active === 2 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}>
                     Pending Orders
                 </button>
-                <button className={`p-4 w-full flex justify-center ${active === 3 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}>
+                <button onClick={navigateCategories} className={`p-4 w-full flex justify-center ${active === 3 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}>
+                    Categories
+                </button>
+                <button className={`p-4 w-full flex justify-center ${active === 4 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}>
                     Log out
                 </button>
             </div>

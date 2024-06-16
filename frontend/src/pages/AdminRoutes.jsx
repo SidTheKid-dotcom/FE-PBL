@@ -4,6 +4,7 @@ import Orders from "./Orders";
 import DeleteCard from "../components/DeleteCard";
 import EditCard from "../components/EditCard";
 import AddCard from "../components/AddCard";
+import ViewCategories from "../components/ViewCategories";
 
 import AdminNavbar from "../components/AdminNavbar";
 import AdminSidebar from "../components/AdminSidebar";
@@ -25,6 +26,7 @@ export default function AdminRoutes() {
             <Route path="addItem" element={<AddCard />} />
             <Route path="editItem/:itemID" element={<EditCard />} />
             <Route path="confirmDelete/:itemID/:itemTitle" element={<DeleteCard />} />
+            <Route path="categories" element={<ViewCategories />} />
           </Routes>
         </div>
       </div>
