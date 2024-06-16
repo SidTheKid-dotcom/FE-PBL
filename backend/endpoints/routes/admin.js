@@ -228,7 +228,7 @@ adminRouter.put('/updateMenuItem', authMiddlewareAdmin, upload.single('image'), 
         else {
             imageUrl = imageURL;
         }
-        console.log(category);
+
         await MENU.findOneAndUpdate(
             { _id: itemID },
             { $set: { title: title, category: category, ingredients: ingredients, price: price, imageUrl: imageUrl } }
@@ -271,6 +271,21 @@ adminRouter.delete('/deleteMenuItem', authMiddlewareAdmin, async function (req, 
     }
 });
 
+adminRouter.get('/getCategories', authMiddlewareAdmin, async function (req, res) {
+    try {
+        const categories = await CATEGORIES.find();
+
+        return res.status(200).json({
+            categories: categories
+        })
+    }
+    catch (e) {
+        return res.status(403).json({
+            message: "Error in fetching all categories"
+        })
+    }
+})
+
 adminRouter.post('/addCategory', authMiddlewareAdmin, async function (req, res) {
     const category = req.body.category;
 
@@ -298,13 +313,73 @@ adminRouter.post('/addCategory', authMiddlewareAdmin, async function (req, res) 
 
 })
 
-adminRouter.get('/getCategories', authMiddlewareAdmin, async function (req, res) {
-    const categories = await CATEGORIES.find();
+adminRouter.put('/updateCategory/:id', authMiddlewareAdmin, async function (req, res) {
+    const categoryID = req.params.id;
+    const newCategoryName = req.body.category;
 
-    return res.status(200).json({
-        categories: categories
-    })
-})
+    if (!newCategoryName) {
+        return res.status(411).json({
+            message: "Category name cannot be empty"
+        });
+    }
+
+    try {
+
+        // Check if a category with the new name already exists
+        const existingCategory = await CATEGORIES.findOne({ name: newCategoryName });
+        if (existingCategory && existingCategory._id != categoryID) {
+            return res.status(411).json({
+                message: "Category with this name already exists in the menu"
+            });
+        }
+
+        // Update the category
+        const updatedCategory = await CATEGORIES.findByIdAndUpdate(categoryID, { name: newCategoryName }, { new: true });
+
+        if (!updatedCategory) {
+            return res.status(404).json({
+                message: "Category not found"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Category successfully updated",
+            category: updatedCategory
+        });
+    } catch (error) {
+        console.error("Error in updating category:", error);
+        return res.status(500).json({
+            message: "Server error occurred while updating category"
+        });
+    }
+});
+
+adminRouter.delete('/deleteCategory/:id', authMiddlewareAdmin, async function (req, res) {
+    const categoryID = req.params.id;
+
+    try {
+        const existingCategory = await CATEGORIES.findById(categoryID);
+
+        if (!existingCategory) {
+            return res.status(404).json({
+                message: "Category does not exist in the menu"
+            });
+        }
+
+        await CATEGORIES.findByIdAndDelete(categoryID);
+        await MENU.updateMany({ category: categoryID }, { $set: { category: null } });
+
+        return res.status(200).json({
+            message: "Category successfully deleted",
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Server error occurred while deleting category",
+            error: error.message
+        });
+    }
+});
+
 
 adminRouter.get('/allOrders', authMiddlewareAdmin, async function (req, res) {
     try {
@@ -382,8 +457,6 @@ adminRouter.put('/updateOrderStatus', authMiddlewareAdmin, async (req, res) => {
 adminRouter.delete('/deleteOrder', authMiddlewareAdmin, async (req, res) => {
     const { orderID } = req.body;
 
-    console.log(orderID);
-
     if (!orderID) {
         return res.status(403).json({
             message: "Please send valid order ID"
@@ -410,21 +483,6 @@ adminRouter.delete('/deleteOrder', authMiddlewareAdmin, async (req, res) => {
             message: "Could not update order status"
         })
     }
-})
-
-adminRouter.get('/viewCategories', authMiddlewareAdmin, async (req, res) => {
-    try {
-        const categories = await CATEGORIES.find();
-
-        return res.status(200).json({
-            categories: categories
-        })
-    }
-    catch (e) {
-        return res.status(403).json({
-            message: "Error in fetching all categories"
-        })
-    }
-})
+});
 
 module.exports = adminRouter;
