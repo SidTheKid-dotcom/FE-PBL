@@ -289,29 +289,35 @@ adminRouter.get('/getCategories', authMiddlewareAdmin, async function (req, res)
 adminRouter.post('/addCategory', authMiddlewareAdmin, async function (req, res) {
     const category = req.body.category;
 
-    const existingCategory = await CATEGORIES.findOne({ name: category })
-
-    if (existingCategory) {
-        return res.status(411).json({
-            message: "Category already exists in the menu"
-        })
+    if (!category || typeof category !== 'string' || category.trim() === '') {
+        return res.status(400).json({
+            message: "Invalid category name"
+        });
     }
 
     try {
-        await CATEGORIES.create({
-            name: category
-        })
-        return res.status(200).json({
-            message: "Category successfully added",
-        })
-    }
-    catch (error) {
-        return res.status(500).json({
-            message: "Server error occured while adding category"
-        })
-    }
+        const existingCategory = await CATEGORIES.findOne({ name: category });
 
-})
+        if (existingCategory) {
+            return res.status(409).json({
+                message: "Category already exists in the menu"
+            });
+        }
+
+        const newCategory = await CATEGORIES.create({ name: category });
+
+        return res.status(201).json({
+            message: "Category successfully added",
+            category: newCategory
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Server error occurred while adding category",
+            error: error.message
+        });
+    }
+});
+
 
 adminRouter.put('/updateCategory/:id', authMiddlewareAdmin, async function (req, res) {
     const categoryID = req.params.id;
@@ -366,11 +372,12 @@ adminRouter.delete('/deleteCategory/:id', authMiddlewareAdmin, async function (r
             });
         }
 
-        await CATEGORIES.findByIdAndDelete(categoryID);
+        const deletedCategory = await CATEGORIES.findByIdAndDelete(categoryID);
         await MENU.updateMany({ category: categoryID }, { $set: { category: null } });
 
         return res.status(200).json({
             message: "Category successfully deleted",
+            category: deletedCategory
         });
     } catch (error) {
         return res.status(500).json({
