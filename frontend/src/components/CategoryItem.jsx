@@ -64,9 +64,9 @@ export default function CategoryItem({ category, setCategories, isEditing, setEd
                 {isEditing ? (
                     <button onClick={submitCategory} disabled={!name} className={`m-1 px-4 py-2 rounded-lg ${name ? 'bg-green-300' : 'bg-gray-300 cursor-not-allowed'}`}>Done</button>
                 ) : (
-                    <div>
+                    <div className="relative">
                         <button onClick={toggleEdit} className="m-1 px-4 py-2 rounded-lg bg-blue-300">Edit</button>
-                        <button onClick={toggleDelete} className="m-1 px-4 py-2 rounded-lg bg-red-300"><img src='/trash-solid.svg' alt='Delete Category' width='15px'></img></button>
+                        <button onClick={toggleDelete} className="m-1 px-4 py-2 rounded-lg bg-red-300"><img src='/trash-solid.svg' alt='Delete Category' width='15px' className="absolute z-999 top-3.5 right-[1.05rem]"></img>&nbsp;&nbsp;</button>
                     </div>
                 )}
             </div>

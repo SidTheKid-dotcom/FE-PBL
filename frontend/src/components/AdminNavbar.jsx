@@ -16,7 +16,7 @@ export default function AdminNavbar() {
     else if(pathname === "/admin/pendingOrders")   setPathname("Pending Orders")
 
     return (
-        <section className="p-4 grid grid-cols-12 gap-10 bg-slate-100 font-bold text-gray-700">
+        <section className="sticky top-0 p-4 grid grid-cols-12 gap-10 bg-slate-100 font-bold text-gray-700">
 
             {/* <figure className="flex justify-center col-span-2">
                 <img title="Company logo" alt="Company Logo"></img>
