@@ -10,11 +10,9 @@ export default function UserRoutes() {
   return (
     <>
       <UserNavbar />
-      <div className="grid grid-cols-12 bg-slate-200 ">
-        <div className="col-span-2">
-          <UserSidebar />
-        </div>
-        <div className="col-span-10">
+      <div className="flex bg-slate-200 min-h-[100vh]">
+        <UserSidebar />
+        <div className="flex-grow flex flex-col items-center ml-[16.66%]">
           <Routes>
             <Route path="Todays-Menu" element={<UserHome />} />
             <Route path="My-Orders" element={<Orders />} />

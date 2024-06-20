@@ -120,10 +120,19 @@ adminRouter.post('/signin', loginMiddlewareAdmin, async function (req, res) {
 });
 
 adminRouter.get('/home', authMiddlewareAdmin, async function (req, res) {
-    const menu = await MENU.find().populate('category');
+    const filter = req.query.filter;
 
-    return res.status(200).json({
-        menu: menu
+    let query = {};
+    if (filter) {
+        query = { category: filter };
+    }
+
+    const menuItems = await MENU.find(query);
+    const categories = await CATEGORIES.find();
+
+    res.json({
+        menu: menuItems,
+        categories: categories
     })
 });
 

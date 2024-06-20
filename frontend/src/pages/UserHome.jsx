@@ -76,7 +76,7 @@ export default function UserHome() {
 
     return (
         <div className='relative grid grid-cols-12 gap-6 min-h-[100vh] h-full'>
-            <section className='absolute top-0 left-0'>
+            <section className='absolute top-0 left-0 z-10 w-[50%]'>
                 <Categories
                     categories={categories}
                     selectedCategory={filterCategory}
@@ -86,16 +86,17 @@ export default function UserHome() {
                     filterCategory && <button onClick={handleRemoveFilter} className='bg-red-200 p-2 rounded-md'>Discard</button>
                 }
             </section>
+
             <section className='col-span-8 flex flex-col items-center'>
                 <div className='m-4 flex flex-col items-center h-full w-[80%] rounded-md'>
-                    {
-                        menu.map(menuItem => (
-                            <UserMenuItem key={menuItem._id} menuItem={menuItem} cart={cart} setCart={setCart} />
-                        ))
-                    }
+                {
+                    menu.map(menuItem => (
+                        <UserMenuItem key={menuItem._id} menuItem={menuItem} cart={cart} setCart={setCart} />
+                    ))
+                }
                 </div>
             </section>
-            <div className='col-span-4 mt-[1px] bg-slate-100'>
+            <div className='col-span-4 w-[25%] mt-[1px] bg-slate-100 fixed top-[7.8%] right-0 h-full'>
                 <div className='m-4 p-4 min-h-[150px] flex flex-col items-center rounded-lg border border-solid border-gray-400'>
                     <h1 className='font-bold text-slate-700'>My Order</h1>
                     <div>
@@ -107,6 +108,7 @@ export default function UserHome() {
                     <Pay cart={cart} total={total} />
                 </div>
             </div>
+
         </div>
     );
 }

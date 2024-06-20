@@ -14,11 +14,9 @@ export default function AdminRoutes() {
     <>
       <AdminNavbar />
 
-      <div className="grid grid-cols-12 min-h-[100vh] h-full bg-slate-200">
-        <div className="col-span-2">
-          <AdminSidebar />
-        </div>
-        <div className="col-span-10 flex flex-col items-center">
+      <div className="flex min-h-[100vh] h-full bg-slate-200">
+        <AdminSidebar />
+        <div className="flex-grow flex flex-col items-center ml-[16.66%]"> {/* Sidebar is 2/12 columns, so content starts after that */}
           <Routes>
             <Route index element={<AdminHome />} />
             <Route path="allOrders" element={<Orders />} />

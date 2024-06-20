@@ -3,6 +3,8 @@ import axios from "axios";
 
 export default function CategoryItem({ category, setCategories, isEditing, setEditingId }) {
     const [name, setName] = useState(category.name);
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [deleteCategory, setDeleteCategory] = useState(null);
 
     const handleChange = (e) => {
         setName(e.target.value);
@@ -12,7 +14,17 @@ export default function CategoryItem({ category, setCategories, isEditing, setEd
         setEditingId(category._id);
     }
 
-    async function toggleDelete() {
+    function requestDelete() {
+        setShowConfirmation(true);
+        setDeleteCategory(category.name);
+    }
+
+    function cancelDelete() {
+        setShowConfirmation(false);
+    }
+
+    async function confirmDelete() {
+        setShowConfirmation(false);
         try {
             const token = localStorage.getItem('token');
 
@@ -66,7 +78,9 @@ export default function CategoryItem({ category, setCategories, isEditing, setEd
                 ) : (
                     <div className="relative">
                         <button onClick={toggleEdit} className="m-1 px-4 py-2 rounded-lg bg-blue-300">Edit</button>
-                        <button onClick={toggleDelete} className="m-1 px-4 py-2 rounded-lg bg-red-300"><img src='/trash-solid.svg' alt='Delete Category' width='15px' className="absolute z-999 top-3.5 right-[1.05rem]"></img>&nbsp;&nbsp;</button>
+                        <button onClick={requestDelete} className="m-1 px-4 py-2 rounded-lg bg-red-300">
+                            <img src='/trash-solid.svg' alt='Delete Category' width='15px' className="absolute z-999 top-3.5 right-[1.05rem]"></img>&nbsp;&nbsp;
+                        </button>
                     </div>
                 )}
             </div>
@@ -75,6 +89,27 @@ export default function CategoryItem({ category, setCategories, isEditing, setEd
                     * Category name cannot be empty
                 </div>
             )}
+            {showConfirmation && (
+                <ConfirmationPrompt
+                    onConfirm={confirmDelete}
+                    onCancel={cancelDelete}
+                    category={deleteCategory}
+                />
+            )}
+        </div>
+    );
+}
+
+function ConfirmationPrompt({ onConfirm, onCancel, category }) {
+    return (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white p-6 rounded shadow-md">
+                <p>Are you sure you want to delete the category {category}?</p>
+                <div className="flex justify-end mt-4">
+                    <button onClick={onCancel} className="px-4 py-2 bg-gray-300 rounded mr-2">Cancel</button>
+                    <button onClick={onConfirm} className="px-4 py-2 bg-red-500 text-white rounded">Delete</button>
+                </div>
+            </div>
         </div>
     );
 }
