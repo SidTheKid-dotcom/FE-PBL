@@ -1,6 +1,9 @@
 import axios from "axios";
+import ShimmerEffect from '../assets/animations/ShimmerEffect';
 
 export default function OrderCard({ order, setOrders }) {
+
+    const [loading, setLoading] = useState(false);
 
     const statusColorClass = order.status === 'Pending' ? 'text-red-500' : 'text-green-500';
     const statusText = order.status === 'Pending' ? 'Pending' : 'Complete';
@@ -8,6 +11,7 @@ export default function OrderCard({ order, setOrders }) {
     const type = window.location.pathname.split('/')[1];
 
     const handleDeleteOrder = async () => {
+        setLoading(true);
         try {
             const token = localStorage.getItem('token');
 
@@ -32,6 +36,7 @@ export default function OrderCard({ order, setOrders }) {
                 const updatedOrders = prevOrders.filter(prevOrder => prevOrder._id !== response.data.deletedOrder._id);
                 return updatedOrders;
             });
+            setLoaging(false);
         } catch (error) {
             console.log('Error occurred while deleting order:', error);
         }
@@ -78,9 +83,9 @@ export default function OrderCard({ order, setOrders }) {
         }
     }
 
-
     return (
         <div className="m-4 rounded-lg w-[60%] bg-slate-100 border border-solid border-gray-400">
+            {loading && <ShimmerEffect />}
             <section className="grid grid-cols-12 border-b border-gray-400">
                 <div className="col-span-2 flex flex-col items-center pt-[1rem]">
                     {

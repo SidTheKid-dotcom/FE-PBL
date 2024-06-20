@@ -1,12 +1,11 @@
 import axios from "axios";
 import { useEffect, useState, useCallback } from "react";
 import { useDropzone } from 'react-dropzone';
-
 import Categories from "./Categories";
 import ActionSuccessful from "./ActionSuccessful";
+import LoadingSpinner from "../assets/animations/LoadingSpinner";
 
 export default function AddCard() {
-
     const [itemInfo, setItemInfo] = useState(['', [], 0]);
     const [uploadedImage, setUploadedImage] = useState(null);
     const [displayImage, setDisplayImage] = useState(null);
@@ -18,9 +17,8 @@ export default function AddCard() {
     const [sendRequest, setSendRequest] = useState(false);
     const [requestSuccess, setRequestSuccess] = useState(false);
 
-
     const handleUpdateClick = () => {
-        setSendRequest(!sendRequest);
+        setSendRequest(true);  // Set sendRequest to true when button is clicked
     };
 
     const updateItemInfo = (e, index) => {
@@ -51,6 +49,7 @@ export default function AddCard() {
             setRequestSuccess(true);
         } catch (error) {
             console.error('Error updating item:', error.message);
+            setSendRequest(false);  // Reset sendRequest in case of an error
         }
     };
 
@@ -133,58 +132,63 @@ export default function AddCard() {
         }
     }, [sendRequest]);
 
-    {
-        if (!requestSuccess) {
-            return (
-                <div className="m-4 p-2 flex flex-col justify-center items-center min-w-[100px] w-[30%] min-h-[200px] bg-slate-100 text-black rounded-md">
-                    <section className="m-2">
-                        <h1>Item name:</h1>
-                        <input className="mt-2 p-2 bg-transparent border border-solid border-black rounded-md" placeholder={"< Enter Title >"} onChange={(e) => updateItemInfo(e, 0)}></input>
-                    </section>
-                    <section className="m-2">
-                        <h1>Select Category:</h1>
-                        <Categories
-                            categories={categories}
-                            selectedCategory={selectedCategory}
-                            setSelectedCategory={setSelectedCategory}
-                        />
-                    </section>
-                    <section className="m-2 min-w-[237.6px]">
-                        <h1>Ingredients:</h1>
-                        <RenderIngredients ingredients={itemInfo[1]} updateIngredient={updateIngredient} deleteIngredient={deleteIngredient} addIngredient={addIngredient} />
-                    </section>
-                    <section className="m-2">
-                        <h1>Price:</h1>
-                        <input className="mt-2 p-2 bg-transparent border border-solid border-black rounded-md" placeholder={"< Enter Price >"} onChange={(e) => updateItemInfo(e, 2)}></input>
-                    </section>
-                    <section className="m-2">
-                        <h2>Upload Image: </h2>
-                        <div {...getRootProps({ className: 'dropzone' })} className="w-[197px]">
-                            <input {...getInputProps()} />
-                            {(uploadedImage && displayImage) ? (
-                                <img src={displayImage} alt="Uploaded" width="150px" />
+    if (sendRequest) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <LoadingSpinner />
+            </div>
+        );
+    }
+
+    if (!requestSuccess) {
+        return (
+            <div className="m-4 p-2 flex flex-col justify-center items-center min-w-[100px] w-[30%] min-h-[200px] bg-slate-100 text-black rounded-md">
+                <section className="m-2">
+                    <h1>Item name:</h1>
+                    <input className="mt-2 p-2 bg-transparent border border-solid border-black rounded-md" placeholder={"< Enter Title >"} onChange={(e) => updateItemInfo(e, 0)}></input>
+                </section>
+                <section className="m-2">
+                    <h1>Select Category:</h1>
+                    <Categories
+                        categories={categories}
+                        selectedCategory={selectedCategory}
+                        setSelectedCategory={setSelectedCategory}
+                    />
+                </section>
+                <section className="m-2 min-w-[237.6px]">
+                    <h1>Ingredients:</h1>
+                    <RenderIngredients ingredients={itemInfo[1]} updateIngredient={updateIngredient} deleteIngredient={deleteIngredient} addIngredient={addIngredient} />
+                </section>
+                <section className="m-2">
+                    <h1>Price:</h1>
+                    <input className="mt-2 p-2 bg-transparent border border-solid border-black rounded-md" placeholder={"< Enter Price >"} onChange={(e) => updateItemInfo(e, 2)}></input>
+                </section>
+                <section className="m-2">
+                    <h2>Upload Image: </h2>
+                    <div {...getRootProps({ className: 'dropzone' })} className="w-[197px]">
+                        <input {...getInputProps()} />
+                        {(uploadedImage && displayImage) ? (
+                            <img src={displayImage} alt="Uploaded" width="150px" />
+                        )
+                            : (
+                                < div className="mt-2 p-10 w-full h-[40%] flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg"><img src="/cloud-arrow-up-solid.svg" alt="Tick" width="80px"></img>Drag & Drop</div>
                             )
-                                : (
-                                    < div className="mt-2 p-10 w-full h-[40%] flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg"><img src="/cloud-arrow-up-solid.svg" alt="Tick" width="80px"></img>Drag & Drop</div>
-                                )
-                            }
-                        </div>
-                    </section>
-                    <section className="mt-3 text-center">
-                        {
-                            !allFilled && (
-                                <div className="pl-1 text-xs text-red-500">
-                                    Please fill the empty fields
-                                </div>)
                         }
-                        <button disabled={!allFilled} className={`m-2 p-2 min-w-[100px] rounded-md ${allFilled ? 'bg-green-300' : 'bg-gray-300 cursor-not-allowed'}`} onClick={handleUpdateClick}>Done</button>
-                    </section>
-                </div>
-            );
-        }
-        else {
-            return <ActionSuccessful action="added" />
-        }
+                    </div>
+                </section>
+                <section className="mt-3 text-center">
+                    {
+                        !allFilled && (
+                            <div className="pl-1 text-xs text-red-500">
+                                Please fill the empty fields
+                            </div>)
+                    }
+                    <button disabled={!allFilled} className={`m-2 p-2 min-w-[100px] rounded-md ${allFilled ? 'bg-green-300' : 'bg-gray-300 cursor-not-allowed'}`} onClick={handleUpdateClick}>Done</button>
+                </section>
+            </div>
+        );
+    } else {
+        return <ActionSuccessful action="added" />
     }
 }
 

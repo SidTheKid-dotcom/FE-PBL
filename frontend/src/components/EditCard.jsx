@@ -4,6 +4,7 @@ import axios from "axios";
 import { useLocation, useParams } from "react-router-dom";
 import Categories from "./Categories";
 import ActionSuccessful from "./ActionSuccessful";
+import LoadingSpinner from "../assets/animations/LoadingSpinner";
 
 export default function EditCard() {
     const location = useLocation();
@@ -138,8 +139,17 @@ export default function EditCard() {
         setImageChanged(true);
 
     }, [uploadedImage]);
+    
 
     const { getRootProps, getInputProps } = useDropzone({ onDrop });
+    
+    if (sendRequest) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <LoadingSpinner />
+            </div>
+        );
+    }
 
     {
         if (!requestSuccess) {

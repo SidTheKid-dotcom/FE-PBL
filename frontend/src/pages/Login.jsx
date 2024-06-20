@@ -1,15 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"
 import axios from 'axios'
+import LoadingDots from "../assets/animations/LoadingDots"
 
 export default function Login() {
     const [loginInfo, setLoginInfo] = useState(['', '']);
     const [showErrorMessage, setShowErrorMessage] = useState(false);
+    const [loading, setLoading] = useState(false);
+
     const navigate = useNavigate();
 
     const handleInput = (index, value) => {
 
-        if(showErrorMessage)    setShowErrorMessage(false)
+        if (showErrorMessage) setShowErrorMessage(false)
 
         const newLoginInfo = [...loginInfo];
         newLoginInfo[index] = value;
@@ -20,6 +23,7 @@ export default function Login() {
         e.preventDefault();
 
         try {
+            setLoading(true);
             const response = await axios.post('http://localhost:3000/api/v1/user/signin', {
                 mobile: loginInfo[0],
                 password: loginInfo[1],
@@ -31,8 +35,10 @@ export default function Login() {
 
             const token = response.data.token;
             localStorage.setItem('token', 'Bearer ' + token);
-
-            navigate('/user/Todays-Menu');
+            setTimeout(() => {
+                setLoading(false);
+                navigate('/user/Todays-Menu')
+            }, 700)
         }
         catch (e) {
             setShowErrorMessage(true);
@@ -65,7 +71,13 @@ export default function Login() {
                                 <div className="mx-5 w-full text-red-500">*Invalid Credentials</div>
                             )
                         }
-                        <button type="submit" className="bg-orange-400 m-5 p-2 rounded-md">Submit</button>
+                        {
+                            loading ? (
+                                <button type="submit" className="bg-orange-400 m-5 p-2 rounded-md flex flex-row justify-center items-center">&nbsp;<LoadingDots />&nbsp;</button>
+                            ) : (
+                                <button type="submit" className="bg-orange-400 m-5 p-2 rounded-md">Submit</button>
+                            )
+                        }
                     </form>
                     <footer className="text-center text-md"><i>"More tech, more ease, more business"</i></footer>
                 </div>
