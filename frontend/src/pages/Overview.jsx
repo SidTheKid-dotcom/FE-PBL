@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaUser, FaUserShield } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import LoadingDots from "../assets/animations/LoadingDots";
+import { jwtDecode } from 'jwt-decode';
 import '../App.css'; // Custom CSS for oscillation effect
 
 export default function Overview() {
@@ -30,6 +31,30 @@ export default function Overview() {
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
+
+    const token = localStorage.getItem('token');
+
+    useEffect(() => {
+        if (!token) {
+            return;
+        }
+        try {
+            const decodedToken = jwtDecode(token);
+            console.log(decodedToken);
+            console.log( decodedToken.exp * 1000, ' ' , Date.now() );
+            if (decodedToken.role === 'user' && decodedToken.exp * 1000 > Date.now()) {
+                navigate('/user/Todays-Menu');
+                return;
+            }
+            else if (decodedToken.role === 'admin' && decodedToken.exp * 1000 > Date.now()) {
+                navigate('admin');
+                return;
+            }
+        } catch (error) {
+            console.error('Invalid token', error);
+            navigate('/');
+        }
+    }, [token]);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
