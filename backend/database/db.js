@@ -6,8 +6,7 @@ mongoose.connect(url);
 
 const userSchema = new mongoose.Schema({
     data: {
-        firstname: String,
-        lastname: String,
+        name: String,
         mobile: String,
         email: String,
         password: String
@@ -20,8 +19,7 @@ const userSchema = new mongoose.Schema({
 
 const adminSchema = new mongoose.Schema({
     data: {
-        firstname: String,
-        lastname: String,
+        name: String,
         mobile: Number,
         email: String,
         password: String

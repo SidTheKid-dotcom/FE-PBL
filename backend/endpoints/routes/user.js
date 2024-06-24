@@ -21,12 +21,18 @@ const instance = new Razorpay({
 });
 
 userRouter.post('/signup', async function (req, res) {
-    const { firstName, lastName, mobile, email, password } = req.body;
+    const { name, email, password } = req.body;
+
+    console.log(email, ' ',  name, ' ', password);
+
+    if (!name || !email || !password) {
+        return res.status(411).json({
+            message: "Missing inputs"
+        })
+    }
 
     const success = createUser.safeParse({
-        firstName,
-        lastName,
-        mobile,
+        name,
         email,
         password
     });
@@ -50,9 +56,7 @@ userRouter.post('/signup', async function (req, res) {
 
     const user = await USER.create({
         data: {
-            firstname: firstName,
-            lastname: lastName,
-            mobile: mobile,
+            name: name,
             email: email,
             password: password
         },
@@ -91,11 +95,11 @@ userRouter.post('/signin', loginMiddlewareUser, async function (req, res) {
         return res.status(200).json({ msg: 'User logged in using JWT' });
     }
 
-    const { mobile, password } = req.body;
+    const { email, password } = req.body;
 
     const user = await USER.findOne({
         $and: [
-            { "data.mobile": mobile },
+            { "data.email": email },
             { "data.password": password }
         ]
     })

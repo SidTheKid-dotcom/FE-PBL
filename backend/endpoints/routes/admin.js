@@ -15,12 +15,16 @@ const { createAdmin } = require('../../zod/types.js');
 const { ADMIN, MENU, ORDERS, CATEGORIES } = require('../../database/db.js');
 
 adminRouter.post('/signup', async function (req, res) {
-    const { firstName, lastName, mobile, email, password } = req.body;
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+        return res.status(411).json({
+            message: "Missing inputs"
+        })
+    }
 
     const success = createAdmin.safeParse({
-        firstName,
-        lastName,
-        mobile,
+        name,
         email,
         password
     });
@@ -44,9 +48,7 @@ adminRouter.post('/signup', async function (req, res) {
 
     const admin = await ADMIN.create({
         data: {
-            firstname: firstName,
-            lastname: lastName,
-            mobile: mobile,
+            name: name,
             email: email,
             password: password
         }
@@ -84,11 +86,11 @@ adminRouter.post('/signin', loginMiddlewareAdmin, async function (req, res) {
         return res.status(200).json({ msg: 'Admin logged in using JWT' });
     }
 
-    const { mobile, password } = req.body;
+    const { email, password } = req.body;
 
     const admin = await ADMIN.findOne({
         $and: [
-            { "data.mobile": mobile },
+            { "data.email": email },
             { "data.password": password }
         ]
     })
