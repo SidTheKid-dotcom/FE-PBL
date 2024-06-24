@@ -70,7 +70,7 @@ userRouter.post('/signup', async function (req, res) {
     }
 
     const userID = user._id;
-    const payload = { userID: userID };
+    const payload = { userID: userID, role: 'user' };
     const options = { expiresIn: '8h' };
 
 
@@ -111,7 +111,7 @@ userRouter.post('/signin', loginMiddlewareUser, async function (req, res) {
     }
 
     const userID = user._id;
-    const payload = { userID: userID };
+    const payload = { userID: userID, role: 'user' };
     const options = { expiresIn: '8h' };
 
     try {

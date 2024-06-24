@@ -61,8 +61,8 @@ adminRouter.post('/signup', async function (req, res) {
     }
 
     const adminID = admin._id;
-    const payload = { adminID: adminID };
-    const options = { expiresIn: '6h' };
+    const payload = { adminID: adminID, role: 'admin' };
+    const options = { expiresIn: '8h' };
 
 
     try {
@@ -102,8 +102,8 @@ adminRouter.post('/signin', loginMiddlewareAdmin, async function (req, res) {
     }
 
     const adminID = admin._id;
-    const payload = { adminID: adminID };
-    const options = { expiresIn: '6h' };
+    const payload = { adminID: adminID, role: 'admin' };
+    const options = { expiresIn: '8h' };
 
 
     try {
