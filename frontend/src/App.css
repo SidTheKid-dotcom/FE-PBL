@@ -1,0 +1,20 @@
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-200%); }
+    100% { transform: translateY(0); }
+  }
+  
+  .oscillate-0 {
+    animation: float 10s ease-in-out infinite forwards;
+  }
+  
+  .oscillate-1 {
+    animation: float 10s ease-in-out infinite forwards;
+    animation-delay: 1.5s;
+  }
+  
+  .oscillate-2 {
+    animation: float 10s ease-in-out infinite forwards;
+    animation-delay: 3s;
+  }
+  
