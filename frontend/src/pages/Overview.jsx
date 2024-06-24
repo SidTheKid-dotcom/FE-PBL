@@ -40,8 +40,6 @@ export default function Overview() {
         }
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken);
-            console.log( decodedToken.exp * 1000, ' ' , Date.now() );
             if (decodedToken.role === 'user' && decodedToken.exp * 1000 > Date.now()) {
                 navigate('/user/Todays-Menu');
                 return;
@@ -75,10 +73,6 @@ export default function Overview() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-
-        console.log(selectedRole);
-        console.log(password);
-        console.log(email);
 
         try {
             setLoading(true);

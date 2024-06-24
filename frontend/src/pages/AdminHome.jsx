@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Categories from "../components/Categories"
 import AdminMenuItem from '../components/AdminMenuItem';
+import LoadingSpinner from "../assets/animations/LoadingSpinner";
 
 export default function AdminHome() {
 
@@ -12,6 +13,7 @@ export default function AdminHome() {
     const [menu, setMenu] = useState([]);
     const [categories, setCategories] = useState([]);
     const [filterCategory, setFilterCategory] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const addMenuItem = () => {
         navigate('/admin/addItem')
@@ -39,6 +41,7 @@ export default function AdminHome() {
 
                 setMenu(response.data.menu);
                 setCategories(response.data.categories);
+                setTimeout(() => setLoading(false), 300);
             }
             catch (error) {
                 console.log("Error in fetching menu items")
@@ -70,16 +73,22 @@ export default function AdminHome() {
                 </section>
             </div>
             {
-                menu.length > 0 ? menu.map(item => (
-                    <AdminMenuItem key={item._id} item={item} />
-                )) : (
-                    <div className='h-screen w-full flex flex-col justify-center items-center'>
-                        <figure className='py-4 px-10 border-2 border-dashed border-gray-400 rounded-lg'>
-                            <img src='/no-item-found.svg' alt='No items found' width='100px'></img>
-                        </figure>
-                        <h1 className='font-bold text-xl m-2'>No items found</h1>
-                        <button onClick={() => setFilterCategory(null)}>Go Back</button>
+                loading ? (
+                    <div className='h-screen w-full mt-[-5rem] flex flex-col justify-center items-center'>
+                        <LoadingSpinner />
                     </div>
+                ) : (
+                    menu.length > 0 ? menu.map(item => (
+                        <AdminMenuItem key={item._id} item={item} />
+                    )) : (
+                        <div className='h-screen w-full flex flex-col justify-center items-center'>
+                            <figure className='py-4 px-10 border-2 border-dashed border-gray-400 rounded-lg'>
+                                <img src='/no-item-found.svg' alt='No items found' width='100px'></img>
+                            </figure>
+                            <h1 className='font-bold text-xl m-2'>No items found</h1>
+                            <button onClick={() => setFilterCategory(null)}>Go Back</button>
+                        </div>
+                    )
                 )
             }
         </div>

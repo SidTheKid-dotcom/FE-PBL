@@ -1,7 +1,5 @@
 export default function Cart({ cart, setCart }) {
 
-    console.log(cart);
-
     function removeFromCart({ cartItem }) {
 
         if (cartItem.quantity === 1) {

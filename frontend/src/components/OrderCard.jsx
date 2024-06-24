@@ -63,8 +63,6 @@ export default function OrderCard({ order, setOrders }) {
                 }
             );
 
-            console.log(response.data);
-
             setOrders(prevOrders => {
                 const updatedOrders = prevOrders.map(prevOrder => {
                     if (prevOrder._id === response.data.updatedOrder._id) {

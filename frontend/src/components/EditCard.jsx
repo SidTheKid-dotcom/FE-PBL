@@ -62,8 +62,6 @@ export default function EditCard() {
             formData.append('imageURL', uploadedImage);
         }
 
-        console.log(uploadedImage);
-
         try {
             const token = localStorage.getItem('token');
             await axios.put(`http://localhost:3000/api/v1/admin/updateMenuItem`, formData,

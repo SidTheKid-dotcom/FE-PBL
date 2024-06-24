@@ -4,12 +4,14 @@ import { useState, useEffect } from "react"
 import Categories from "../components/Categories"
 import UserMenuItem from '../components/UserMenuItem'
 import Cart from '../components/Cart'
+import LoadingSpinner from "../assets/animations/LoadingSpinner";
 
 export default function UserHome() {
 
     const [menu, setMenu] = useState([]);
     const [cart, setCart] = useState([]);
     const [total, setTotal] = useState(0);
+    const [loading, setLoading] = useState(true);
 
     const [categories, setCategories] = useState([]);
     const [filterCategory, setFilterCategory] = useState(null);
@@ -44,6 +46,7 @@ export default function UserHome() {
 
                 setMenu(response.data.menu);
                 setCategories(response.data.categories);
+                setTimeout(() => setLoading(false), 300);
             }
             catch (error) {
                 console.log("Error in fetching menu items")
@@ -89,11 +92,25 @@ export default function UserHome() {
 
             <section className='col-span-8 flex flex-col items-center'>
                 <div className='m-4 flex flex-col items-center h-full w-[80%] rounded-md'>
-                {
-                    menu.map(menuItem => (
-                        <UserMenuItem key={menuItem._id} menuItem={menuItem} cart={cart} setCart={setCart} />
-                    ))
-                }
+                    {
+                        loading ? (
+                            <div className='h-screen w-full mt-[-5rem] flex flex-col justify-center items-center'>
+                                <LoadingSpinner />
+                            </div>
+                        ) : (
+                            menu.length > 0 ? menu.map(menuItem => (
+                                <UserMenuItem key={menuItem._id} menuItem={menuItem} cart={cart} setCart={setCart} />
+                            )) : (
+                                <div className='h-screen w-full flex flex-col justify-center items-center'>
+                                    <figure className='py-4 px-10 border-2 border-dashed border-gray-400 rounded-lg'>
+                                        <img src='/no-item-found.svg' alt='No items found' width='100px'></img>
+                                    </figure>
+                                    <h1 className='font-bold text-xl m-2'>No items found</h1>
+                                    <button onClick={() => setFilterCategory(null)}>Go Back</button>
+                                </div>
+                            )
+                        )
+                    }
                 </div>
             </section>
             <div className='col-span-4 w-[25%] mt-[1px] bg-slate-100 fixed top-[7.8%] right-0 h-full'>

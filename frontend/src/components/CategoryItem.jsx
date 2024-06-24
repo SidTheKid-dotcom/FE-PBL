@@ -58,7 +58,6 @@ export default function CategoryItem({ category, setCategories, isEditing, setEd
 
             if (response.status === 200) {
                 setEditingId(null);
-                console.log('Category updated');
             }
         } catch (error) {
             console.error('Error updating category:', error);

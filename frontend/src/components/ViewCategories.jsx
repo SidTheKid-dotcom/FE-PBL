@@ -41,7 +41,6 @@ export default function ViewCategories() {
                 _id: response.data.category._id,
                 name: response.data.category.name
             }]);
-            console.log('new category added successfully');
         } catch (error) {
             console.error('Error adding category:', error);
         }
