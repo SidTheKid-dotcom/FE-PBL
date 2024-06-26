@@ -14,6 +14,7 @@ export default function AdminNavbar() {
     if(pathname === "/admin")   setPathname("Todays Menu")
     else if(pathname === "/admin/allOrders")   setPathname("All Orders")
     else if(pathname === "/admin/pendingOrders")   setPathname("Pending Orders")
+    else if(pathname === "/admin/Categories")   setPathname("Categories")
 
     return (
         <section className="sticky top-0 p-4 grid grid-cols-12 gap-10 bg-slate-100 font-bold text-gray-700">

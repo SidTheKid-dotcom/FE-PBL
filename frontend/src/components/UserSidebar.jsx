@@ -45,7 +45,7 @@ export default function UserSidebar() {
 
     const navigateHome = () => {
         setShowConfirmLogout(false);
-        navigate('/user');
+        navigate('/user/Todays-Menu');
     };
 
     const navigateMyOrders = () => {

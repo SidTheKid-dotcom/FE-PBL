@@ -60,7 +60,7 @@ export default function ViewCategories() {
 
     return (
         <div>
-            <button className={`m-4 p-2 w-[300px] rounded-md font-bold ${addNew ? 'bg-gray-300 cursor-not-allowed' : 'bg-orange-400'}`} onClick={handleAddCategory}>Add Category</button>
+            <button className={`m-4 p-2 w-[350px] rounded-md font-bold ${addNew ? 'bg-gray-300 cursor-not-allowed' : 'bg-orange-400'}`} onClick={handleAddCategory}>Add Category</button>
             {
                 addNew && (
                     <div className={`flex flex-col m-4 p-4 w-[300px] bg-slate-100 text-black border border-solid border-gray-300 rounded-lg`}>

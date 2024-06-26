@@ -48,6 +48,7 @@ const Categories = memo(({ categories, selectedCategory, setSelectedCategory }) 
     onChange={(selectedOption) => setSelectedCategory(selectedOption)}
     getOptionLabel={(category) => category.name}
     getOptionValue={(category) => category.name}
+    placeholder="Filter By Category"
   />
 ));
 

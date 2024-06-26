@@ -12,7 +12,7 @@ const { JWT_SECRET_ADMIN } = require("../../config.js");
 const cloudinary = require("./cloudinaryConfig.js");
 
 const { createAdmin } = require('../../zod/types.js');
-const { ADMIN, MENU, ORDERS, CATEGORIES } = require('../../database/db.js');
+const { ADMIN, MENU, ORDERS, CATEGORIES, FEEDBACK } = require('../../database/db.js');
 
 adminRouter.post('/signup', async function (req, res) {
     const { name, email, password } = req.body;
@@ -500,6 +500,24 @@ adminRouter.delete('/deleteOrder', authMiddlewareAdmin, async (req, res) => {
         return res.status(500).json({
             message: "Could not update order status"
         })
+    }
+});
+
+adminRouter.get('/feedbacks', async function (req, res) {
+    try {
+        // Fetch feedbacks with non-empty feedback strings, sort by rating in decreasing order, and limit to top 5
+        const feedbacks = await FEEDBACK.find({ feedback: { $ne: "" } })
+            .sort({ rating: -1 })
+            .limit(5)
+            .populate('userID');
+
+        res.status(200).json({
+            message: "Top 5 Feedbacks retrieved successfully",
+            feedbacks: feedbacks
+        });
+    } catch (error) {
+        console.error("Error in retrieving feedbacks:", error);
+        return res.status(500).json({ error: "Internal server error" });
     }
 });
 

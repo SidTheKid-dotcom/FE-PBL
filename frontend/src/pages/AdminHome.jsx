@@ -58,7 +58,7 @@ export default function AdminHome() {
     }, [filterCategory])
 
     return (
-        <div className='w-[50%] flex flex-col items-center'>
+        <div className='w-[50%] flex flex-col items-center  transition-opacity duration-300' style={{ opacity: loading ? 0.5 : 1 }}>
             <div className='grid grid-cols-12'>
                 <button className='col-span-7 w-[300px] m-4 p-2 bg-orange-400 rounded-md font-bold' onClick={addMenuItem}>Add Item</button>
                 <section className='col-span-5 text-center flex flex-row gap-2 p-4'>
@@ -68,7 +68,7 @@ export default function AdminHome() {
                         setSelectedCategory={setFilterCategory}
                     />
                     {
-                        filterCategory && <button onClick={handleRemoveFilter} className='bg-red-200 p-2 rounded-md'>Discard</button>
+                        filterCategory && <button onClick={handleRemoveFilter} className='bg-red-200 p-[0.5rem] rounded-md'>Discard</button>
                     }
                 </section>
             </div>
@@ -81,7 +81,7 @@ export default function AdminHome() {
                     menu.length > 0 ? menu.map(item => (
                         <AdminMenuItem key={item._id} item={item} />
                     )) : (
-                        <div className='h-screen w-full flex flex-col justify-center items-center'>
+                        <div className='mt-[-6rem] h-screen w-full flex flex-col justify-center items-center'>
                             <figure className='py-4 px-10 border-2 border-dashed border-gray-400 rounded-lg'>
                                 <img src='/no-item-found.svg' alt='No items found' width='100px'></img>
                             </figure>

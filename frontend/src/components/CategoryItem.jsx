@@ -65,7 +65,7 @@ export default function CategoryItem({ category, setCategories, isEditing, setEd
     }
 
     return (
-        <div className={`flex flex-col m-4 p-4 w-[300px] bg-slate-100 text-black border border-solid border-gray-300 rounded-lg transition-all ease-in-out duration-300 ${isEditing ? 'py-8' : 'py-4'}`}>
+        <div className={`flex flex-col m-4 p-4 w-[350px] bg-slate-100 text-black border border-solid border-gray-300 rounded-lg transition-all ease-in-out duration-300 ${isEditing ? 'py-8' : 'py-4'}`}>
             <div className="flex justify-between items-center">
                 {isEditing ? (
                     <input value={name} onChange={handleChange} className="m-1 p-2 rounded-lg font-bold text-xl w-[60%]" />

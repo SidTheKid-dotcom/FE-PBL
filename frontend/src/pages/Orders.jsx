@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import axios from "axios";
 import OrderCard from "../components/OrderCard";
+import LoadingSpinner from "../assets/animations/LoadingSpinner";
 
 export default function Orders() {
 
@@ -21,11 +22,14 @@ export default function Orders() {
                         'Content-Type': 'application/json'
                     }
                 })
-                setLoading(false);
 
-                setOrders(response.data.orders);
+                setTimeout(() => {
+                    setLoading(false);
+                    setOrders(response.data.orders);
+                }, 300);
             }
             catch (error) {
+                setLoading(false);
                 console.log("Error in fetching orders")
             }
         }
@@ -40,12 +44,24 @@ export default function Orders() {
 
     return (
         <div className="min-h-[100vh] h-full w-full text-black flex flex-col items-center">
-            {loading || orders === null? (
-                <div className="flex items-center justify-center h-full">Loading...</div>
+            {loading ? (
+                <div className="flex items-center justify-center h-full">
+                    <LoadingSpinner />
+                </div>
             ) : (
-                orders.reverse().map(order => (
-                    <OrderCard key={order._id} order={order} setOrders={setOrders} />
-                ))
+                orders.length === 0 ? (
+                    <div className="mt-[-2rem] flex flex-col gap-4 items-center justify-center h-full">
+                        <figure className="ml-[2.3rem]">
+                            <img src='/no-order.png' alt='No Orders' width='150px'></img>
+                        </figure>
+                        <figcaption className="text-center font-bold text-xl">No orders found</figcaption>
+                    </div>
+                )
+                    : (
+                        orders.reverse().map((order, index) => (
+                            <OrderCard key={index} order={order} setOrders={setOrders} />
+                        ))
+                    )
             )
             }
         </div>

@@ -78,19 +78,27 @@ export default function UserHome() {
     }
 
     return (
-        <div className='relative grid grid-cols-12 gap-6 min-h-[100vh] h-full'>
-            <section className='absolute top-0 left-0 z-10 w-[50%]'>
-                <Categories
-                    categories={categories}
-                    selectedCategory={filterCategory}
-                    setSelectedCategory={setFilterCategory}
-                />
-                {
-                    filterCategory && <button onClick={handleRemoveFilter} className='bg-red-200 p-2 rounded-md'>Discard</button>
-                }
-            </section>
+        <div className='relative grid grid-cols-12 gap-6 min-h-[100vh] h-full transition-opacity duration-300' style={{ opacity: loading ? 0.5 : 1 }} >
 
             <section className='col-span-8 flex flex-col items-center'>
+                {
+                    loading ? (
+                        <div className='h-screen w-full mt-[-5rem] flex flex-col justify-center items-center'>
+                            <LoadingSpinner />
+                        </div>
+                    ) : (
+                        <section className='w-full mt-[1rem] flex flex-row gap-5 items-center justify-center'>
+                            <Categories
+                                categories={categories}
+                                selectedCategory={filterCategory}
+                                setSelectedCategory={setFilterCategory}
+                            />
+                            {
+                                filterCategory && <button onClick={handleRemoveFilter} className='bg-red-200 p-2 rounded-md'>Discard</button>
+                            }
+                        </section>
+                    )
+                }
                 <div className='m-4 flex flex-col items-center h-full w-[80%] rounded-md'>
                     {
                         loading ? (

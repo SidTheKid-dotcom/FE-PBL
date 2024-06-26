@@ -23,8 +23,6 @@ const instance = new Razorpay({
 userRouter.post('/signup', async function (req, res) {
     const { name, email, password } = req.body;
 
-    console.log(email, ' ',  name, ' ', password);
-
     if (!name || !email || !password) {
         return res.status(411).json({
             message: "Missing inputs"
@@ -249,20 +247,24 @@ userRouter.post('/feedback', authMiddlewareUser, async function (req, res) {
     }
 });
 
-userRouter.get('/feedbacks', async function (req, res) {
+userRouter.get('/feedback', authMiddlewareUser, async function (req, res) {
+
+    const userID = req.userID;
+
     try {
         // Fetch feedbacks with non-empty feedback strings, sort by rating in decreasing order, and limit to top 5
-        const feedbacks = await FEEDBACK.find({ feedback: { $ne: "" } })
-            .sort({ rating: -1 })
-            .limit(5)
-            .populate('userID');
+        const feedback = await FEEDBACK.find({ userID: userID });
+
+        if(!feedback || feedback.length === 0) {
+            return res.status(404).json({ message: "Feedback not found" });
+        }
 
         res.status(200).json({
-            message: "Top 5 Feedbacks retrieved successfully",
-            feedbacks: feedbacks
+            message: "FeedBack of user retrieved successfully",
+            feedback: feedback
         });
     } catch (error) {
-        console.error("Error in retrieving feedbacks:", error);
+        console.error("Error in retrieving feedback of user:", error);
         return res.status(500).json({ error: "Internal server error" });
     }
 });

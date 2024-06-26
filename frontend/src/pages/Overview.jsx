@@ -8,21 +8,21 @@ import '../App.css'; // Custom CSS for oscillation effect
 
 export default function Overview() {
     const images = [
-        '/PBL-Landing-Page/photo-1556740738-b6a63e27c4df.avif',
-        'https://via.placeholder.com/150?text=Image2',
-        'https://via.placeholder.com/150?text=Image3',
+        '/PBL-Landing-Page/360_F_465288715_F3uc0aZMhzSbNbftEzHSb6RfUVQfCHeU.jpg',
+        '/PBL-Landing-Page/85402539.webp',
+        '/PBL-Landing-Page/Fresh-Veggies-1200x834.jpg',
         '/PBL-Landing-Page/premium_photo-1661778156582-670d5b62a9e4.avif',
-        'PBL-Landing-Page/premium_photo-1679503585289-c02467981894.avif',
+        '/PBL-Landing-Page/premium_photo-1679503585289-c02467981894.avif',
         '/PBL-Landing-Page/photo-1614873636018-548106274e2a.avif',
-        'https://via.placeholder.com/150?text=Image7',
-        'https://via.placeholder.com/150?text=Image8',
-        'https://via.placeholder.com/150?text=Image9',
+        '/PBL-Landing-Page/seedless_fruits.jpg',
+        '/PBL-Landing-Page/happy-waiter-using-digital-tablet-260nw-1460315789.jpg',
+        '/PBL-Landing-Page/south-indian-food-dosa.png',
         '/PBL-Landing-Page/photo-1556742393-d75f468bfcb0.avif',
         '/PBL-Landing-Page/premium_photo-1661563844238-126db10e77b7.avif',
-        'https://via.placeholder.com/150?text=Image12',
-        'https://via.placeholder.com/150?text=Image13',
-        '',
-        'https://via.placeholder.com/150?text=Image15',
+        '/PBL-Landing-Page/tango_20tamari_20-_20outdoor.webp',
+        '/PBL-Landing-Page/Types-of-Food-Grinding-101-CA.png',
+        '/PBL-Landing-Page/Untitled-design-2022-01-24T193825.271--1-.webp',
+        '/PBL-Landing-Page/istockphoto-177728353-612x612.jpg',
     ];
 
     const [selectedRole, setSelectedRole] = useState('');
