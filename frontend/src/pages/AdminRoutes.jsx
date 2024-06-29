@@ -10,6 +10,7 @@ import AdminNavbar from "../components/AdminNavbar";
 import AdminSidebar from "../components/AdminSidebar";
 import { jwtDecode } from 'jwt-decode';
 import { useEffect, useState } from "react";
+import FeedbackList from "../components/FeedbackList";
 
 export default function AdminRoutes() {
 
@@ -62,6 +63,7 @@ export default function AdminRoutes() {
                   <Route path="editItem/:itemID" element={<EditCard />} />
                   <Route path="confirmDelete/:itemID/:itemTitle" element={<DeleteCard />} />
                   <Route path="categories" element={<ViewCategories />} />
+                  <Route path="feedbacks" element={<FeedbackList />} />
                 </Routes>
               </div>
             </div>

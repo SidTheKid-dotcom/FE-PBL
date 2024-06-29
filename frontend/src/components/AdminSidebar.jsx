@@ -23,6 +23,9 @@ export default function AdminSidebar() {
             case "/admin/Categories":
                 setActive(3);
                 break;
+            case "/admin/feedbacks":
+                setActive(4);
+                break;
             default:
                 setActive(0);
                 break;
@@ -36,9 +39,9 @@ export default function AdminSidebar() {
 
     const handleLogoutButtonClick = () => {
         setShowConfirmLogout(true);
-        if (active !== 4) {
+        if (active !== 5) {
             setPrevActive(active);
-            setActive(4);
+            setActive(5);
         }
     };
 
@@ -63,6 +66,10 @@ export default function AdminSidebar() {
         handleLogoutButtonBlur();
         navigate('/admin/Categories')
     };
+    const navigateFeedbacks = () => {
+        handleLogoutButtonBlur();
+        navigate('/admin/feedbacks')
+    };
 
     return (
         <div className="fixed top-[7.8%] left-0 h-full w-[16.66%] bg-slate-100 text-black">
@@ -79,9 +86,12 @@ export default function AdminSidebar() {
                 <button onClick={navigateCategories} className={`p-4 w-full flex justify-center ${active === 3 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}>
                     Categories
                 </button>
+                <button onClick={navigateFeedbacks} className={`p-4 w-full flex justify-center ${active === 4 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}>
+                    Feedbacks
+                </button>
                 <button
                     onClick={handleLogoutButtonClick}
-                    className={`p-4 w-full flex justify-center ${active === 4 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}
+                    className={`p-4 w-full flex justify-center ${active === 5 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}
                 >
                     Log out
                 </button>
