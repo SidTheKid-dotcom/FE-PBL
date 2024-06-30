@@ -15,6 +15,10 @@ export default function AdminNavbar() {
     else if(pathname === "/admin/allOrders")   setPathname("All Orders")
     else if(pathname === "/admin/pendingOrders")   setPathname("Pending Orders")
     else if(pathname === "/admin/Categories")   setPathname("Categories")
+    else if(pathname === "/admin/feedbacks")   setPathname("Feedbacks")
+    else if(pathname === "/admin/addItem")   setPathname("Add Item")
+    else if(pathname.includes("/admin/editItem"))   setPathname("Edit Item")
+    else if(pathname.includes("/admin/confirmDelete"))   setPathname("Delete Item")
 
     return (
         <section className="sticky top-0 p-4 grid grid-cols-12 gap-10 bg-slate-100 font-bold text-gray-700">

@@ -138,7 +138,7 @@ userRouter.get('/home', authMiddlewareUser, async function (req, res) {
         query = { category: filter };
     }
 
-    const menuItems = await MENU.find(query);
+    const menuItems = await MENU.find(query).sort({ title: 1 });
     const categories = await CATEGORIES.find();
 
     res.json({

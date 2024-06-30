@@ -59,21 +59,33 @@ export default function UserSidebar() {
     };
 
     return (
-        <div className="fixed top-[7.8%] left-0 h-full w-[16.66%] bg-slate-100 text-black">
+        <div className="fixed top-[6.5%] left-0 h-full w-[16.66%] bg-slate-100 text-black">
             <div className="max-h-[50%] flex flex-col justify-around">
-                <button onClick={navigateHome} className={`p-4 w-full flex justify-center ${active === 0 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}>
+                <button onClick={navigateHome} className={`p-4 w-full flex justify-start items-center gap-2 ${active === 0 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}>
+                    <figure className="relative ml-[1.5rem]">
+                        <img src={active === 0 ? `/house-solid (1).svg` : `/house-solid.svg`} alt='Home' width='15px'></img>
+                    </figure>
                     Home
                 </button>
-                <button onClick={navigateMyOrders} className={`p-4 w-full flex justify-center ${active === 1 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}>
+                <button onClick={navigateMyOrders} className={`p-4 w-full flex justify-start items-center gap-2 ${active === 1 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}>
+                    <figure className="relative ml-[1.5rem]">
+                        <img src={active === 1 ? `/clipboard-solid (1).svg` : `/clipboard-solid.svg`} alt='Home' width='15px'></img>
+                    </figure>
                     My Orders
                 </button>
-                <button onClick={navigateFeedback} className={`p-4 w-full flex justify-center ${active === 2 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}>
+                <button onClick={navigateFeedback} className={`p-4 w-full flex justify-start items-center gap-2 ${active === 2 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}>
+                    <figure className="relative ml-[1.5rem]">
+                        <img src={active === 2 ? `/comment-solid (1).svg` : `/comment-solid.svg`} alt='Home' width='15px'></img>
+                    </figure>
                     Feedback
                 </button>
                 <button
                     onClick={handleLogoutButtonClick}
-                    className={`p-4 w-full flex justify-center ${active === 3 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}
+                    className={`p-4 w-full flex justify-start items-center gap-2 ${active === 3 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}
                 >
+                    <figure className="relative ml-[1.5rem]">
+                        <img src={active === 3 ? `/right-from-bracket-solid (1).svg` : `/right-from-bracket-solid.svg`} alt='Home' width='15px'></img>
+                    </figure>
                     Log out
                 </button>
                 {showConfirmLogout && (

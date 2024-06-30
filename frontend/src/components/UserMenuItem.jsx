@@ -91,7 +91,7 @@ function Quantity({ quantity, setQuantity }) {
             <section className="col-span-3 flex flex-col justify-center items-center relative">
                 <button onClick={decrement} className="absolute h-1/3 w-full top-[-5px] font-light text-gray-600">^</button>
                 <h1 className="text-xs w-full text-center">{quantity}</h1>
-                <button onClick={increment} className="absolute h-1/3 w-full bottom-[10px] font-light text-gray-600">ᵥ</button>
+                <button onClick={increment} className="absolute h-1/3 w-full bottom-[14px] font-light text-gray-600 text-xl">ᵥ</button>
             </section>
         </div>
 

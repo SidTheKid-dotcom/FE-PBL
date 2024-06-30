@@ -19,7 +19,7 @@ export default function AdminMenuItems({ item }) {
                     <img src={item.imageUrl} className="h-fill"></img>
                 </figure>
             </section>
-            <section className="col-span-5">
+            <section className="col-span-5 text-sm">
                 <h1 className="ml-[-15px] font-bold text-xl">{item.title}</h1>
                 { /* The columns depends on screen size so modify it later */}
                 {renderIngredients(item.ingredients, 2)}

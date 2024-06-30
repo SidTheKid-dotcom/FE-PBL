@@ -54,50 +54,52 @@ export default function AdminHome() {
   }, [filterCategory]);
 
   return (
-    <div className='w-[50%] flex flex-col items-center'>
-      <div className='grid grid-cols-12'>
-        <button
-          className={`col-span-7 w-[300px] m-4 p-2 bg-orange-400 rounded-md font-bold ${loading ? 'opacity-50 pointer-events-none' : ''}`}
-          onClick={addMenuItem}
-          disabled={loading || menu.length === 0} // Disable button when loading or menu is empty
-        >
-          Add Item
-        </button>
-        <section className='col-span-5 text-center flex flex-row gap-2 p-4 items-center justify-center'>
+    <div className='w-full flex flex-col items-center justify-center'>
+      <div className='ml-[6rem] w-[80%] grid grid-cols-12 sticky top-[3.52rem] z-10 bg-slate-200'>
+        <div className='col-span-6 flex justify-end'>
+          <button
+            className={`w-[300px] m-4 p-2 bg-orange-400 rounded-md font-bold ${loading ? 'opacity-50 pointer-events-none' : ''}`}
+            onClick={addMenuItem}
+            disabled={loading} // Disable button when loading
+          >
+            Add Item
+          </button>
+        </div>
+        <section className='col-span-6 text-center flex flex-row gap-2 p-4 items-center justify-start'>
           <Categories categories={categories} selectedCategory={filterCategory} setSelectedCategory={setFilterCategory} />
           {filterCategory && (
             <button
               onClick={handleRemoveFilter}
-              className='bg-red-200 p-2 rounded-md z-10'
-              style={{ position: 'relative' }}
+              className='bg-red-200 p-2 rounded-md'
             >
               Discard
             </button>
           )}
         </section>
       </div>
-      <div className={`w-full transition-opacity duration-300 ${transition ? 'opacity-0' : 'opacity-100'}`}>
-        {loading && menu.length === 0 ? (
-          <div className='h-screen w-full mt-[-5rem] flex flex-col justify-center items-center'>
-            <LoadingSpinner />
-          </div>
-        ) : menu.length > 0 ? (
-          menu.map((item) => <AdminMenuItem key={item._id} item={item} />)
-        ) : (
-          <div className='mt-[-6rem] h-screen w-full flex flex-col justify-center items-center'>
-            <figure className='py-4 px-10 border-2 border-dashed border-gray-400 rounded-lg'>
-              <img src='/no-item-found.svg' alt='No items found' width='100px' />
-            </figure>
-            <h1 className='font-bold text-xl m-2'>No items found</h1>
-            <button
-              onClick={() => setFilterCategory(null)}
-              className='bg-red-200 p-2 rounded-md z-10'
-              style={{ position: 'relative' }}
-            >
-              Go Back
-            </button>
-          </div>
-        )}
+      <div className='w-[60%] flex flex-col items-center'>
+        <div className={`w-full transition-opacity duration-300 ${transition ? 'opacity-0' : 'opacity-100'}`}>
+          {loading && menu.length === 0 ? (
+            <div className='h-screen w-full mt-[-7rem] flex flex-col justify-center items-center'>
+              <LoadingSpinner />
+            </div>
+          ) : menu.length > 0 ? (
+            menu.map((item) => <AdminMenuItem key={item._id} item={item} />)
+          ) : (
+            <div className='mt-[-6rem] h-screen w-full flex flex-col justify-center items-center'>
+              <figure className='py-4 px-10 border-2 border-dashed border-gray-400 rounded-lg'>
+                <img src='/no-item-found.svg' alt='No items found' width='100px' />
+              </figure>
+              <h1 className='font-bold text-xl m-2'>No items found</h1>
+              <button
+                onClick={() => setFilterCategory(null)}
+                className='p-2 rounded-md z-10'
+              >
+                <u>Go Back</u>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

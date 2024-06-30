@@ -129,7 +129,7 @@ adminRouter.get('/home', authMiddlewareAdmin, async function (req, res) {
         query = { category: filter };
     }
 
-    const menuItems = await MENU.find(query).populate('category');
+    const menuItems = await MENU.find(query).populate('category').sort({ title: 1 });
     const categories = await CATEGORIES.find();
 
     res.json({

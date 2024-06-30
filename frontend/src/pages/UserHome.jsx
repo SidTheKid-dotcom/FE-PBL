@@ -12,6 +12,7 @@ export default function UserHome() {
     const [cart, setCart] = useState([]);
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [transition, setTransition] = useState(true);
 
     const [categories, setCategories] = useState([]);
     const [filterCategory, setFilterCategory] = useState(null);
@@ -28,6 +29,8 @@ export default function UserHome() {
     }, []);
 
     useEffect(() => {
+
+        setLoading(true);
 
         const fetchData = async () => {
 
@@ -46,10 +49,13 @@ export default function UserHome() {
 
                 setMenu(response.data.menu);
                 setCategories(response.data.categories);
-                setTimeout(() => setLoading(false), 300);
+                setLoading(false);
+                setTimeout(() => setTransition(false), 500);
             }
             catch (error) {
                 console.log("Error in fetching menu items")
+                setLoading(false);
+                setTransition(false);
             }
         }
 
@@ -78,30 +84,30 @@ export default function UserHome() {
     }
 
     return (
-        <div className='relative grid grid-cols-12 gap-6 min-h-[100vh] h-full transition-opacity duration-300' style={{ opacity: loading ? 0.5 : 1 }} >
+        <div className='relative grid grid-cols-12 gap-6 min-h-[100vh] h-full w-full transition-opacity duration-300' style={{ opacity: loading ? 0.5 : 1 }} >
 
             <section className='col-span-8 flex flex-col items-center'>
-                {
-                    loading ? (
-                        <div className='h-screen w-full mt-[-5rem] flex flex-col justify-center items-center'>
-                            <LoadingSpinner />
-                        </div>
-                    ) : (
-                        <section className='w-full mt-[1rem] flex flex-row gap-5 items-center justify-center'>
-                            <Categories
-                                categories={categories}
-                                selectedCategory={filterCategory}
-                                setSelectedCategory={setFilterCategory}
-                            />
-                            {
-                                filterCategory && <button onClick={handleRemoveFilter} className='bg-red-200 p-2 rounded-md'>Discard</button>
-                            }
-                        </section>
-                    )
-                }
-                <div className='m-4 flex flex-col items-center h-full w-[80%] rounded-md'>
+                <div className='w-full bg-slate-200 sticky top-[3.5rem] z-10'>
+                    <section className='w-full py-3 mt-[1rem] flex flex-row gap-5 items-center justify-center'>
+                        <Categories
+                            categories={categories}
+                            selectedCategory={filterCategory}
+                            setSelectedCategory={setFilterCategory}
+                        />
+                        {filterCategory && (
+                            <button
+                                onClick={handleRemoveFilter}
+                                className='bg-red-200 p-2 rounded-md z-10'
+                                style={{ position: 'relative' }}
+                            >
+                                Discard
+                            </button>
+                        )}
+                    </section>
+                </div>
+                <div className={`w-[80%] transition-opacity duration-300 ${transition ? 'opacity-0' : 'opacity-100'}`}>
                     {
-                        loading ? (
+                        loading && menu.length === 0 ? (
                             <div className='h-screen w-full mt-[-5rem] flex flex-col justify-center items-center'>
                                 <LoadingSpinner />
                             </div>
@@ -109,19 +115,19 @@ export default function UserHome() {
                             menu.length > 0 ? menu.map(menuItem => (
                                 <UserMenuItem key={menuItem._id} menuItem={menuItem} cart={cart} setCart={setCart} />
                             )) : (
-                                <div className='h-screen w-full flex flex-col justify-center items-center'>
+                                <div className='mt-[-6rem] h-screen w-full flex flex-col justify-center items-center'>
                                     <figure className='py-4 px-10 border-2 border-dashed border-gray-400 rounded-lg'>
                                         <img src='/no-item-found.svg' alt='No items found' width='100px'></img>
                                     </figure>
                                     <h1 className='font-bold text-xl m-2'>No items found</h1>
-                                    <button onClick={() => setFilterCategory(null)}>Go Back</button>
+                                    <button onClick={() => setFilterCategory(null)}><u>Go Back</u></button>
                                 </div>
                             )
                         )
                     }
                 </div>
             </section>
-            <div className='col-span-4 w-[25%] mt-[1px] bg-slate-100 fixed top-[7.8%] right-0 h-full'>
+            <div className='col-span-4 w-[25%] mt-[1px] bg-slate-100 fixed top-[6.5%] right-0 h-full'>
                 <div className='m-4 p-4 min-h-[150px] flex flex-col items-center rounded-lg border border-solid border-gray-400'>
                     <h1 className='font-bold text-slate-700'>My Order</h1>
                     <div>
