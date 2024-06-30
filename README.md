@@ -1,11 +1,29 @@
-# Mess Management System
+# ProRestro – A POS System for Restaurants
 
-Mess Management System is a web app built on the MERN stack<br>
-It is used for order and billing of foods in a mess / restraunt / cafe<br>
+ProRestro is a full-stack web application and POS system designed for seamless food ordering and management, built using the MERN stack (MongoDB, Express.js, React.js, Node.js). It integrates JWT for authentication, Cloudinary for image storage, and Razorpay's SDK for payment verification.
 
-## Advantages 
+## Features
 
-1. Provide a medium for online ordering
-2. Maintain a queue system so people receive their food on time
-3. Prevent food hogging 
-4. Provide a medium for verification of the customer and their food
+- **User Authentication:** Secure routes and user management using JWT.
+- **Menu Management:** CRUD operations for managing restaurant menus.
+- **Order Processing:** Seamless order placement and status tracking.
+- **Image Management:** Integration with Cloudinary for storing and managing food images.
+- **Payment Integration:** Verification of payments using Razorpay's SDK.
+
+## Technologies Used
+
+- **Frontend:** React.js, HTML, CSS
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB
+- **Cloud Services:** Cloudinary for image storage
+- **Payment Gateway:** Razorpay SDK
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js and npm installed locally
+- MongoDB instance (local or cloud-based)
+- Cloudinary API credentials
+- Razorpay account and API keys
+
