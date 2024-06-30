@@ -33,7 +33,7 @@ export default function FeedbackList() {
     return (
         <div className="max-w-screen-lg mx-auto my-8">
             <h1 className="text-3xl font-bold mb-4 text-center">All Feedbacks</h1>
-            <div className="w-full bg-white shadow-md rounded-lg overflow-hidden break-words">
+            <div className="w-[500px] bg-white shadow-md rounded-lg overflow-hidden break-words">
                 {feedbacks.length === 0 ? (
                     <p className="text-lg text-center p-4">No feedbacks available.</p>
                 ) : (

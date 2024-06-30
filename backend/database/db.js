@@ -57,6 +57,7 @@ const categorySchema = new mongoose.Schema({
 
 const feedbackSchema = new mongoose.Schema({
     rating: Number,
+    type: String,
     feedback: String,
     userID: {
         type: mongoose.Schema.Types.ObjectId,

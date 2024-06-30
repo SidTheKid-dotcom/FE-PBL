@@ -216,7 +216,7 @@ userRouter.post('/confirmPayment', authMiddlewareUser, async function (req, res)
 userRouter.post('/feedback', authMiddlewareUser, async function (req, res) {
     try {
         const userID = req.userID;
-        const { rating, feedback } = req.body; // Extract rating and feedback from request body
+        const { rating, feedback, type } = req.body; // Extract rating and feedback from request body
 
         // Check if user exists
         const user = await USER.findById(userID);
@@ -234,6 +234,7 @@ userRouter.post('/feedback', authMiddlewareUser, async function (req, res) {
         const createdFeedback = await FEEDBACK.create({
             rating: rating,
             feedback: feedback,
+            type: type,
             userID: userID
         });
 
@@ -247,6 +248,44 @@ userRouter.post('/feedback', authMiddlewareUser, async function (req, res) {
     }
 });
 
+userRouter.put('/feedback', authMiddlewareUser, async function (req, res) {
+    try {
+        const userID = req.userID;
+        const { rating, feedback, type } = req.body; // Extract rating and feedback from request body
+
+        // Check if user exists
+        const user = await USER.findById(userID);
+        if (!user) {
+            return res.status(400).json({ message: "Invalid user ID" });
+        }
+
+        // Check if user has already given feedback
+        const existingFeedback = await FEEDBACK.findOne({ userID: userID });
+        if (!existingFeedback) {
+            return res.status(400).json({ message: "User has never posted feedback before" });
+        }
+
+        // Create feedback
+        await FEEDBACK.findOneAndUpdate(
+            { userID: userID, },
+            {
+                rating: rating,
+                feedback: feedback,
+                type: type
+            },
+            {
+                useFindAndModify: false // To use the native findOneAndUpdate rather than findAndModify (deprecated in Mongoose 6)
+            });
+
+        res.status(201).json({
+            message: "Feedback Updated",
+        });
+    } catch (error) {
+        console.error("Error in updating feedback:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 userRouter.get('/feedback', authMiddlewareUser, async function (req, res) {
 
     const userID = req.userID;
@@ -255,7 +294,7 @@ userRouter.get('/feedback', authMiddlewareUser, async function (req, res) {
         // Fetch feedbacks with non-empty feedback strings, sort by rating in decreasing order, and limit to top 5
         const feedback = await FEEDBACK.find({ userID: userID });
 
-        if(!feedback || feedback.length === 0) {
+        if (!feedback || feedback.length === 0) {
             return res.status(404).json({ message: "Feedback not found" });
         }
 

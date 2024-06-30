@@ -8,8 +8,9 @@ export default function Feedback() {
     const [feedbackText, setFeedbackText] = useState('');
     const [loading, setLoading] = useState(true);
     const [alreadySubmitted, setAlreadySubmitted] = useState(false);
+    const [isEditReq, setIsEditReq] = useState(false);
     const [charCount, setCharCount] = useState(0);
-    const [displayMessage, setDispalyMessage] = useState('Max Character Limit Reached');
+    const [displayMessage,] = useState('Max Character Limit Reached');
     const maxChars = 500;
 
     useEffect(() => {
@@ -28,8 +29,12 @@ export default function Feedback() {
                 }
 
                 setTimeout(() => {
+                    console.log(response.data);
                     setLoading(false);
                     setAlreadySubmitted(true);
+                    setIsEditReq(true);
+                    setValue(response.data.feedback[0].rating);
+                    setFeedbackText(response.data.feedback[0].feedback);
                 }, 300);
 
             } catch (error) {
@@ -48,21 +53,54 @@ export default function Feedback() {
     };
 
     const submitFeedBack = async () => {
+        var type = '';
+        if(value/25 < 1){
+            type = 'Could Improve 👎';
+          }
+          else if(value/25 <= 2){
+            type = 'Good 👍';
+          }
+          else if(value/25 <= 3){
+            type = 'Amazing 🎉';
+          }
+          else if(value/25 <= 4){
+            type = 'Excellent!! 🚀';
+          }
         try {
             const token = localStorage.getItem('token');
 
-            const response = await axios.post(`http://localhost:3000/api/v1/user/feedback`, {
-                rating: value,
-                feedback: feedbackText
-            }, {
-                headers: {
-                    'Authorization': token
-                }
-            });
+            if (!isEditReq) {
+                const response = await axios.post(`http://localhost:3000/api/v1/user/feedback`, {
+                    rating: value,
+                    feedback: feedbackText,
+                    type: type
+                }, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
 
-            if (response.status === 201) {
-                alert('Feedback submitted successfully!');
-                setAlreadySubmitted(true);
+                if (response.status === 201) {
+                    alert('Feedback updated successfully!');
+                    setAlreadySubmitted(true);
+                }
+            }
+            else {
+                const response = await axios.put(`http://localhost:3000/api/v1/user/feedback`, {
+                    rating: value,
+                    feedback: feedbackText,
+                    type: type
+                }, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+
+                if (response.status === 201) {
+                    alert('Feedback updated successfully!');
+                    setAlreadySubmitted(true);
+                    setIsEditReq(false);
+                }
             }
         }
         catch (error) {
@@ -88,13 +126,14 @@ export default function Feedback() {
                         <p>Feedback Already Submitted Once</p>
                         <p>Thank You for your feedback 😁</p>
                     </div>
+                    <button onClick={() => setAlreadySubmitted(false)} className="text-xl mt-[4rem] font-bold bg-orange-400 py-2 px-3 rounded-lg text-center">Update Review</button>
                 </div>
             ) : (
-                <div className="my-[3rem] flex flex-col p-4 items-center justify-between rounded-lg bg-slate-200 w-[40%] min-h-[400px] border-4 border-dashed border-gray-400">
+                <div className="flex flex-col p-4 items-center justify-between rounded-lg bg-slate-200 w-[40%] min-h-[400px] border-4 border-dashed border-gray-400">
                     <div className="text-center">
                         <div className="flex flex-col justify-between gap-4">
                             <h1 className="font-bold text-2xl">Feedback Form</h1>
-                            <p className="text-md">Please rate your experience:</p>
+                            <p className="text-md my-[1rem]">Please rate your experience:</p>
                         </div>
                     </div>
                     <div className="text-center w-[80%]">

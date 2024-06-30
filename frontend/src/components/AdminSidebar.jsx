@@ -96,7 +96,7 @@ export default function AdminSidebar() {
                     Log out
                 </button>
                 {showConfirmLogout && (
-                    <div className="absolute z-999 m-4 p-4 min-w-[15%] min-h-[100px] top-[45%] bg-slate-200 text-black font-bold rounded-lg flex flex-col justify-center items-center gap-4">
+                    <div className="absolute z-999 m-4 p-4 w-[88%] min-h-[100px] top-[45%] bg-slate-200 text-black font-bold rounded-lg flex flex-col justify-center items-center gap-4">
                         <section className="font-bold text-xl">Confirm Logout</section>
                         <section className="grid grid-cols-2 gap-2">
                             <button onClick={handleLogoutButtonBlur} className="col-span-1 rounded-md p-2 m-1 bg-red-400">Cancel</button>
