@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { Toaster, toast } from "sonner";
 
 export default function CategoryItem({ category, setCategories, isEditing, setEditingId }) {
     const [name, setName] = useState(category.name);
@@ -12,6 +13,10 @@ export default function CategoryItem({ category, setCategories, isEditing, setEd
 
     function toggleEdit() {
         setEditingId(category._id);
+    }
+
+    function cancelEditingCategory() {
+        setEditingId(null);
     }
 
     function requestDelete() {
@@ -36,10 +41,20 @@ export default function CategoryItem({ category, setCategories, isEditing, setEd
             });
 
             if (response.status === 200) {
+                toast("Category Deleted Successfully", {
+                    position: "top-right",
+                    className:
+                        "border border-solid border-green-400",
+                });
                 const deletedCategoryId = response.data.category._id;
                 setCategories(prevCategories => prevCategories.filter(category => category._id !== deletedCategoryId));
             }
         } catch (error) {
+            toast("Couldn't Delete Category", {
+                position: "top-right",
+                className:
+                    "border border-solid border-red-400",
+            });
             console.error('Error deleting category:', error);
         }
     }
@@ -57,9 +72,19 @@ export default function CategoryItem({ category, setCategories, isEditing, setEd
                 });
 
             if (response.status === 200) {
+                toast("Category Updated Successfully", {
+                    position: "top-right",
+                    className:
+                        "border border-solid border-green-400",
+                });
                 setEditingId(null);
             }
         } catch (error) {
+            toast("Couldn't Update Category", {
+                position: "top-right",
+                className:
+                    "border border-solid border-red-400",
+            });
             console.error('Error updating category:', error);
         }
     }
@@ -73,7 +98,10 @@ export default function CategoryItem({ category, setCategories, isEditing, setEd
                     <span className="max-w-[170px] font-bold text-xl">{name}</span>
                 )}
                 {isEditing ? (
-                    <button onClick={submitCategory} disabled={!name} className={`m-1 px-4 py-2 rounded-lg ${name ? 'bg-green-300' : 'bg-gray-300 cursor-not-allowed'}`}>Done</button>
+                    <div className="flex flex-row">
+                        <button onClick={submitCategory} disabled={!name} className={`m-1 px-4 py-2 rounded-lg ${name ? 'bg-green-300' : 'bg-gray-300 cursor-not-allowed'}`}>Done</button>
+                        <button onClick={cancelEditingCategory} className={`m-1 px-4 py-2 rounded-lg bg-red-300`}>X</button>
+                    </div>
                 ) : (
                     <div className="relative">
                         <button onClick={toggleEdit} className="m-1 px-4 py-2 rounded-lg bg-blue-300">Edit</button>
@@ -101,7 +129,8 @@ export default function CategoryItem({ category, setCategories, isEditing, setEd
 
 function ConfirmationPrompt({ onConfirm, onCancel, category }) {
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <Toaster />
             <div className="bg-white p-6 rounded shadow-md">
                 <p>Are you sure you want to delete the category {category}?</p>
                 <div className="flex justify-end mt-4">

@@ -38,6 +38,7 @@ export default function Orders() {
 
         return () => {
             setOrders([]);
+            setLoading(true);
         }
 
     }, [pathname])

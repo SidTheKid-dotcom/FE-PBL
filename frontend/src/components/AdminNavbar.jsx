@@ -11,7 +11,7 @@ export default function AdminNavbar() {
         setPathname(location.pathname);
     }, [location])
     
-    if(pathname === "/admin")   setPathname("Todays Menu")
+    if(pathname === "/admin")   setPathname("All Items")
     else if(pathname === "/admin/allOrders")   setPathname("All Orders")
     else if(pathname === "/admin/pendingOrders")   setPathname("Pending Orders")
     else if(pathname === "/admin/Categories")   setPathname("Categories")

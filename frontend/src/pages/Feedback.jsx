@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Slider from "../components/Feedback/Slider";
 import LoadingSpinner from "../assets/animations/LoadingSpinner";
+import { Toaster, toast } from "sonner";
 
 export default function Feedback() {
     const [value, setValue] = useState(75); // Initial value
@@ -29,7 +30,6 @@ export default function Feedback() {
                 }
 
                 setTimeout(() => {
-                    console.log(response.data);
                     setLoading(false);
                     setAlreadySubmitted(true);
                     setIsEditReq(true);
@@ -44,6 +44,12 @@ export default function Feedback() {
         }
 
         getPrevReview();
+
+        return () => {
+            setIsEditReq(false);
+            setAlreadySubmitted(false);
+            setLoading(true);
+        }
     }, []);
 
     const handleFeedbackChange = (event) => {
@@ -54,18 +60,18 @@ export default function Feedback() {
 
     const submitFeedBack = async () => {
         var type = '';
-        if(value/25 < 1){
+        if (value / 25 < 1) {
             type = 'Could Improve 👎';
-          }
-          else if(value/25 <= 2){
+        }
+        else if (value / 25 <= 2) {
             type = 'Good 👍';
-          }
-          else if(value/25 <= 3){
+        }
+        else if (value / 25 <= 3) {
             type = 'Amazing 🎉';
-          }
-          else if(value/25 <= 4){
+        }
+        else if (value / 25 <= 4) {
             type = 'Excellent!! 🚀';
-          }
+        }
         try {
             const token = localStorage.getItem('token');
 
@@ -81,7 +87,11 @@ export default function Feedback() {
                 });
 
                 if (response.status === 201) {
-                    alert('Feedback updated successfully!');
+                    toast("Feedback Posted Successfully", {
+                        position: "top-right",
+                        className:
+                            "border border-solid border-green-400",
+                    });
                     setAlreadySubmitted(true);
                 }
             }
@@ -97,7 +107,11 @@ export default function Feedback() {
                 });
 
                 if (response.status === 201) {
-                    alert('Feedback updated successfully!');
+                    toast("Feedback Updated Successfully", {
+                        position: "top-right",
+                        className:
+                            "border border-solid border-green-400",
+                    });
                     setAlreadySubmitted(true);
                     setIsEditReq(false);
                 }
@@ -105,6 +119,13 @@ export default function Feedback() {
         }
         catch (error) {
             console.error('Error posting feedback:', error.message);
+        }
+
+        return() => {
+            setFeedbackText('');
+            setAlreadySubmitted(false);
+            setIsEditReq(false);
+            setLoading(false);
         }
     };
 
@@ -120,6 +141,7 @@ export default function Feedback() {
 
     return (
         <div className="h-[100vh] w-full flex flex-col items-center my-[50px]">
+            <Toaster />
             {alreadySubmitted ? (
                 <div className="text-3xl mt-[-6rem] font-bold h-screen flex flex-col items-center justify-center">
                     <div className="border-4 border-dashed border-gray-400 p-[2rem] rounded-lg text-center flex flex-col gap-10">

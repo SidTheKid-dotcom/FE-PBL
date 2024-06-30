@@ -87,8 +87,11 @@ export default function UserHome() {
         <div className='relative grid grid-cols-12 gap-6 min-h-[100vh] h-full w-full transition-opacity duration-300' style={{ opacity: loading ? 0.5 : 1 }} >
 
             <section className='col-span-8 flex flex-col items-center'>
-                <div className='w-full bg-slate-200 sticky top-[3.5rem] z-10'>
-                    <section className='w-full py-3 mt-[1rem] flex flex-row gap-5 items-center justify-center'>
+                <div className='w-[80%] ml-[2rem] sticky top-[3.5rem] z-10 grid grid-cols-12 bg-slate-200'>
+                    <section className='col-span-7'>
+                        <h1 className='mt-[1rem] text-3xl p-4 font-bold'>{filterCategory ? filterCategory.name : 'All Items'}</h1>
+                    </section>
+                    <section className='mb-[-0.5rem] col-span-5 justify-end w-full py-3 mt-[1rem] flex flex-row gap-5 items-center'>
                         <Categories
                             categories={categories}
                             selectedCategory={filterCategory}

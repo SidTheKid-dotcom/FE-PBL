@@ -33,13 +33,16 @@ export default function FeedbackList() {
     return (
         <div className="max-w-screen-lg mx-auto my-8">
             <h1 className="text-3xl font-bold mb-4 text-center">All Feedbacks</h1>
-            <div className="w-[500px] bg-white shadow-md rounded-lg overflow-hidden break-words">
+            <div className="mt-[2rem] w-[500px] bg-white shadow-md rounded-lg overflow-hidden break-words">
                 {feedbacks.length === 0 ? (
                     <p className="text-lg text-center p-4">No feedbacks available.</p>
                 ) : (
                     feedbacks.map((feedback) => (
                         <div key={feedback._id} className="border-b border-gray-200 py-4 px-6">
-                            <p className="mb-2 text-lg font-semibold">Rating: {feedback.rating}</p>
+                            <div className="flex flex-row justify-start gap-4">
+                                <p className="mb-2 text-lg font-semibold">Rating: {feedback.rating}</p>
+                                <p className="mb-2 text-lg font-semibold">Type: {feedback.type}</p>
+                            </div>
                             <p className="text-sm text-gray-600 mb-2">Feedback: {feedback.feedback}</p>
                             <p className="mt-2 text-xs text-gray-400">Submitted By: {feedback.userID.data.name}</p>
                         </div>

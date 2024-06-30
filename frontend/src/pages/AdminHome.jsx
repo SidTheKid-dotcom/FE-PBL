@@ -55,7 +55,7 @@ export default function AdminHome() {
 
   return (
     <div className='w-full flex flex-col items-center justify-center'>
-      <div className='ml-[6rem] w-[80%] grid grid-cols-12 sticky top-[3.52rem] z-10 bg-slate-200'>
+      <div className='ml-[6rem] w-[80%] grid grid-cols-12 sticky top-[3.52rem] z-1 bg-slate-200'>
         <div className='col-span-6 flex justify-end'>
           <button
             className={`w-[300px] m-4 p-2 bg-orange-400 rounded-md font-bold ${loading ? 'opacity-50 pointer-events-none' : ''}`}

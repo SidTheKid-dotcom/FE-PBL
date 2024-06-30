@@ -82,7 +82,7 @@ export default function AdminSidebar() {
                 </button>
                 <button onClick={navigateAllOrders} className={`p-4 w-full flex justify-start items-center gap-2 ${active === 1 ? 'bg-orange-100 border-l-4 border-solid border-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}>
                     <figure className="relative ml-[1.5rem]">
-                        <img src={active === 1 ? `/list-check-solid(1).svg` : `/list-check-solid.svg`} alt='Home' width='15px'></img>
+                        <img src={active === 1 ? `/list-check-solid (1).svg` : `/list-check-solid.svg`} alt='Home' width='15px'></img>
                     </figure>
                     All Orders
                 </button>
