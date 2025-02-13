@@ -1,8 +1,13 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 
-const url = "mongodb+srv://siddhantmvishnu:PBLproject@messmanagement.ii1mv9k.mongodb.net/";
+const url = process.env.MONGODB_URI || '';
 
-mongoose.connect(url);
+mongoose.connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => console.log("MongoDB Connected"))
+.catch(err => console.log("MongoDB Connection Error:", err));
 
 const userSchema = new mongoose.Schema({
     data: {
